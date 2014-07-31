@@ -1,0 +1,94 @@
+﻿<Window x:Class="SRO_Management.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:SRO_Management.ViewModels"
+        xmlns:core="clr-namespace:System;assembly=mscorlib"
+        xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Icon="{StaticResource logoIcon}" 
+        Title="Client Data Exporter" Height="450" Width="350" ResizeMode="NoResize">
+    <Window.Resources>
+        <vm:BoolConverter x:Key="BoolConverter"/>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <DockPanel>        
+        <!--Header Groupbox-->
+        <GroupBox Margin="5,5,5,3" DockPanel.Dock="Top" Header="File Header" FontFamily="Arial" BorderThickness="2" BorderBrush="#FFBDBDBD" Foreground="#FF1D89B2" FontSize="14" FontWeight="Bold">
+            <Grid Name="headerGrid" Margin="0,0,0,-2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2.2*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="{Binding ClientLabel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" 
+                       Margin="5,10,5,5" Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" KeyboardNavigation.IsTabStop="False"/>
+                <Label Grid.Row="1" Content="{Binding WellLabel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" 
+                       Margin="5,5,5,5" Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" KeyboardNavigation.IsTabStop="False"/>
+                <Label Grid.Row="2" Content="{Binding DstLabel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" 
+                       Margin="5,5,5,5" Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" KeyboardNavigation.IsTabStop="False"/>
+                <Label Grid.Row="3" Content="{Binding SerialLabel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"
+                       Margin="5,5,5,5" Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" KeyboardNavigation.IsTabStop="False"/>
+                <Label Grid.Row="4" Content="{Binding Position, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" 
+                       Margin="5,5,5,5" Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" KeyboardNavigation.IsTabStop="False"/>
+                <Label Grid.Row="5" Content="{Binding DepthLabel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" 
+                       Margin="5,5,5,5" Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" KeyboardNavigation.IsTabStop="False"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Margin="5,10,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding ClientInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding WellInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding DstInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" />
+                <TextBox Grid.Row="3" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding SerialInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding PositionInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" />
+                <TextBox Grid.Row="5" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding DepthInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
+            </Grid>
+        </GroupBox>
+
+        <!--Button Stackpanel-->
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5,0,5,5">
+            <Button Width="80" Content="Select File(s)" Margin="0,0,8,0" Command="{Binding SelectFilesToExportCommand, Mode=OneWay}" />
+            <Button Width="80" Content="Export" Command="{Binding ExportDataFilesCommand, Mode=OneWay}" Margin="0,0,3,0"/>
+        </StackPanel>
+
+        <!--Filter Groupbox-->
+        <GroupBox  Margin="5,2,5,3" Header="Filter" FontFamily="Arial" BorderThickness="2" BorderBrush="#FFBDBDBD" Foreground="#FF1D89B2" FontSize="14" FontWeight="Bold">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.ColumnSpan="5" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Content="Pressure Units: " Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ComboBox Width="60" ItemsSource="{Binding PresUnitValuesComboBox, Mode=OneWay}" SelectedItem="{Binding SelectedPresUnit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,6,0" FontSize="12" FontWeight="Normal" VerticalAlignment="Center"/>
+                    <Label Content="Temp Units: " Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                    <ComboBox Width="60" ItemsSource="{Binding TempUnitValueComboBox, Mode=OneWay}" SelectedItem="{Binding SelectedTempUnit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,3,0" FontSize="12" FontWeight="Normal" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Label Grid.Column="0" Grid.Row="1" Content="Start: " Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" Margin="0"/>
+                <tk:DateTimePicker Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Center" FontSize="12" FontWeight="Normal" Margin="0,0,20,0" TextAlignment="Center" IsEnabled="{Binding IsChecked, Converter={StaticResource BoolConverter}, ElementName=checkBox}" AutoCloseCalendar="True" Value="{Binding FilterStartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CultureInfo="en-GB" Format="Custom" FormatString="dd MMM yyyy HH:mm:ss"/>
+                <Label Grid.Column="0" Grid.Row="2" Content="End: " Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" Margin="0"/>
+                <tk:DateTimePicker Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Center" FontSize="12" FontWeight="Normal" Margin="0,0,20,0" TextAlignment="Center" IsEnabled="{Binding IsChecked, Converter={StaticResource BoolConverter}, ElementName=checkBox}" AutoCloseCalendar="True" Value="{Binding FilterEndTime}" CultureInfo="en-GB" Format="Custom" FormatString="dd MMM yyyy HH:mm:ss"/>
+                <CheckBox x:Name="checkBox" Foreground="#FF1D89B2" Content="All Data" Grid.Column="3" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="1" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" Margin="0,0,3,0" HorizontalAlignment="Right" IsChecked="{Binding AllDataCb, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Label Grid.Row="3" Grid.ColumnSpan="2" Content="Select Data Type: " Foreground="#FF1D89B2" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" Margin="0"/>
+                <ComboBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="0,0,20,0" FontSize="12" FontWeight="Normal" ItemsSource="{Binding FileTypeComboBox, Mode=OneWay}" SelectedItem="{Binding SelectFileType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </GroupBox>
+
+    </DockPanel>
+
+</Window>
