@@ -46,15 +46,26 @@
                 <TextBox Grid.Row="1" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding WellInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
                 <TextBox Grid.Row="2" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding DstInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" />
                 <TextBox Grid.Row="3" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding SerialInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
+                <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Content="*" ToolTip="Required Field" VerticalAlignment="Center" Foreground="#FF6A6868" />
                 <TextBox Grid.Row="4" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding PositionInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" />
+                <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Content="*" ToolTip="Required Field" VerticalAlignment="Center" Foreground="#FF6A6868" />
                 <TextBox Grid.Row="5" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding DepthInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
             </Grid>
         </GroupBox>
 
+        <StatusBar DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0,0,5,0">
+            <StatusBarItem>
+                <TextBlock Width="200" Margin="0,0,10,0" Text="{Binding ProgressText}" VerticalAlignment="Center" FontSize="10" TextAlignment="Right" FontStyle="Italic"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <ProgressBar Width="80" Value="{Binding ProgressValue}" Height="10"/>
+            </StatusBarItem>
+        </StatusBar>
+
         <!--Button Stackpanel-->
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5,0,5,5">
             <Button Width="80" Content="Select File(s)" Margin="0,0,8,0" Command="{Binding SelectFilesToExportCommand, Mode=OneWay}" />
-            <Button Width="80" Content="Export" Command="{Binding ExportDataFilesCommand, Mode=OneWay}" Margin="0,0,3,0"/>
+            <Button Width="80" Content="Export" Command="{Binding ExportDataFilesCommand, Mode=OneWay}" Margin="0,0,3,0" IsEnabled="{Binding NotBusy}"/>
         </StackPanel>
 
         <!--Filter Groupbox-->

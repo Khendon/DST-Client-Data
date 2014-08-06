@@ -125,7 +125,6 @@
     <Compile Include="Models\MemoryRecord.cs" />
     <Compile Include="Models\UnitConverter.cs" />
     <Compile Include="ViewModels\BoolConverter.cs" />
-    <Compile Include="ViewModels\INotifyViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

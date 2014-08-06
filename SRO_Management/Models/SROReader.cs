@@ -12,17 +12,11 @@ namespace SRO_Management.Models
     public class SROReader : IEnumerable<IDataRecord>
     {
         private List<SRORecord> sroRecords = new List<SRORecord>();
-        public List<SRORecord> SroRecords
-        {
-            get { return sroRecords; }
-            private set { sroRecords = value; }
-        }
 
         public SROReader(string dirPath, List<string> fileNames, FileTypes userFileType)
         {
             ParseRecords(dirPath, fileNames, userFileType);
         }
-
 
         private void ParseRecords(string dirPath, List<string> fileNames, FileTypes userFileType)
         {
@@ -48,10 +42,10 @@ namespace SRO_Management.Models
                     }
 
                 }
-                catch (CsvReaderException ex)
+                catch (Exception sroEx)
                 {
-                    System.Windows.MessageBox.Show("Please select a valid SRO/Historical data file");
-                    System.Diagnostics.Trace.Assert(false, "User selected invalid file", ex.Message);
+                    System.Diagnostics.Trace.WriteLine(DateTime.Now + sroEx.ToString(), "Error parsing SRO log file");
+                    throw;
                 }
 
             }
@@ -60,18 +54,7 @@ namespace SRO_Management.Models
 
         public IEnumerator<IDataRecord> GetEnumerator()
         {
-
-            foreach (var record in sroRecords)
-            {
-                if (record == null)
-                {
-                    break;
-                }
-
-                yield return record;
-
-            }
-
+            return sroRecords.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

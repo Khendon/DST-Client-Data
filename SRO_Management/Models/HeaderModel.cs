@@ -20,12 +20,12 @@ namespace SRO_Management.Models
         private string positionLabel = "Position";
 
         // Private members - header user input values
-        private string clientInput;
-        private string wellInput;
-        private string dstInput;
-        private string serialInput;
-        private string depthInput;
-        private string positionInput;
+        private string clientInput = string.Empty;
+        private string wellInput = string.Empty;
+        private string dstInput = string.Empty;
+        private string serialInput = string.Empty;
+        private string depthInput = string.Empty;
+        private string positionInput = string.Empty;
 
 
         //Public properties - header labels

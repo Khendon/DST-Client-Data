@@ -51,15 +51,21 @@ namespace SRO_Management.Models
 
             try
             {
-                convertInputFormat = DateTime.ParseExact(rawTimeStamp, "dd MMM yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+                if (rawTimeStamp.Contains("End"))
+                {
+                    return convertInputFormat = null;                    
+                }
+                else
+                {
+                    convertInputFormat = DateTime.ParseExact(rawTimeStamp, "dd MMM yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
 
-                return convertInputFormat;
-
+                    return convertInputFormat;
+                }
             }
             catch (FormatException formatExc)
             {
-                System.Diagnostics.Trace.Assert(false, formatExc.Message);
-                return convertInputFormat = null;
+                System.Diagnostics.Trace.WriteLine(DateTime.Now + formatExc.ToString(), "Timestamp not a recognised DateTime format");
+                throw;
             }
 
 

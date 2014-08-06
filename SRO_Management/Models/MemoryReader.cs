@@ -24,36 +24,35 @@ namespace SRO_Management.Models
         {
             CsvStreamCreator csvStreamCreate = new CsvStreamCreator();
 
-            TextReader inputStream = new StreamReader(dirPath + "\\" + fileName);
-            inputStream.ReadLine();
-            inputStream.ReadLine();
-
-            using (var csv = csvStreamCreate.CsvStream(inputStream, userSelectedFileType))
+            try
             {
-                IEnumerable<MemoryRecord> records = csv.GetRecords<MemoryRecord>();
+                TextReader inputStream = new StreamReader(dirPath + "\\" + fileName);
+                inputStream.ReadLine();
+                inputStream.ReadLine();
+                inputStream.ReadLine();
 
-                foreach (var record in records)
+                using (var csv = csvStreamCreate.CsvStream(inputStream, userSelectedFileType))
                 {
-                   memRecords.Add(record);
+                    IEnumerable<MemoryRecord> records = csv.GetRecords<MemoryRecord>();
+
+                    foreach (var record in records)
+                    {
+                        memRecords.Add(record);
+                    }
                 }
+
             }
-            
+            catch (Exception memEx)
+            {
+                System.Diagnostics.Trace.WriteLine(DateTime.Now + memEx.ToString(), "Error parsing memory log file");
+                throw;
+            }            
         }
         
 
         public IEnumerator<IDataRecord> GetEnumerator()
-        {         
-
-            foreach(var record in memRecords)
-            {
-                if (record == null)
-                {
-                    break;
-                }
-
-                yield return record;
-            }
-            
+        {
+            return memRecords.GetEnumerator();            
         }
 
 

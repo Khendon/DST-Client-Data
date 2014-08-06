@@ -92,7 +92,7 @@ namespace SRO_Management.Models
             DirPath = defaultPath;
         }
 
-        private void MemFileSelection ()
+        private void MemFileSelection()
         {
             MemFile = "";
 
@@ -104,19 +104,29 @@ namespace SRO_Management.Models
 
             string fileName;
 
-            if (openDialog.ShowDialog() == true)
+            try
             {
+                if (openDialog.ShowDialog() == true)
+                {
 
-                fileName = System.IO.Path.GetFileName(openDialog.FileName);
-                DirPath = System.IO.Path.GetDirectoryName(openDialog.FileName);
-                MemFile = fileName;
-            }            
+                    fileName = System.IO.Path.GetFileName(openDialog.FileName);
+                    DirPath = System.IO.Path.GetDirectoryName(openDialog.FileName);
+                    MemFile = fileName;
+                }
+            }
+            catch (Exception memFileEx)
+            {                
+                System.Diagnostics.Trace.WriteLine(DateTime.Now + "," + memFileEx.ToString(), ",Please select a valid sensor log file");
+                MemFile = null;
+                throw;
+            }
+
         }
 
 
         private void MultiFileSelection()
         {
-            if(MultipleFiles != null)
+            if (MultipleFiles != null)
             {
                 MultipleFiles.Clear();
             }
@@ -129,16 +139,26 @@ namespace SRO_Management.Models
 
             List<string> files = new List<string>();
 
-            if (openDialog.ShowDialog() == true)
+            try
             {
-                foreach (string fileName in openDialog.FileNames)
+                if (openDialog.ShowDialog() == true)
                 {
-                    files.Add(System.IO.Path.GetFileName(fileName));
-                }
+                    foreach (string fileName in openDialog.FileNames)
+                    {
+                        files.Add(System.IO.Path.GetFileName(fileName));
+                    }
 
-                MultipleFiles = files;
-                DirPath = System.IO.Path.GetDirectoryName(openDialog.FileName);
+                    MultipleFiles = files;
+                    DirPath = System.IO.Path.GetDirectoryName(openDialog.FileName);
+                }
             }
+            catch (Exception sroFileEx)
+            {
+                System.Diagnostics.Trace.WriteLine(DateTime.Now + "," + sroFileEx.ToString(), ",Please select valid SRO data files");
+                MultipleFiles = null;
+                throw;
+            }
+
 
         }
 
@@ -149,10 +169,20 @@ namespace SRO_Management.Models
             saveDialog.FileName = string.Format(@"{0}_{1}_{2}_{3:MM-yy_HHmm}.txt", selectedFileType.ToString(), serialInput, positionInput, DateTime.Now);
             saveDialog.InitialDirectory = DirPath;
 
-            if (saveDialog.ShowDialog() == true)
+            try
             {
-                FileSaveName = saveDialog.FileName;
+                if (saveDialog.ShowDialog() == true)
+                {
+                    FileSaveName = saveDialog.FileName;
+                }
             }
+            catch (Exception saveLocEx)
+            {
+                System.Diagnostics.Trace.WriteLine(DateTime.Now + "," + saveLocEx.ToString(), ",File name or save location invalid");
+                FileSaveName = null;
+                throw;
+            }
+
         }
 
     }

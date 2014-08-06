@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Practices.Prism.Commands;
-using Microsoft.Practices.Prism;
+using Microsoft.Practices.Prism.Mvvm;
 using System.Threading;
 
 
 namespace SRO_Management.ViewModels
 {
-    public class MainWindowViewModel : INotifyViewModel
+    public class MainWindowViewModel : BindableBase
     {
 
         private Models.HeaderModel Header;
@@ -22,50 +22,50 @@ namespace SRO_Management.ViewModels
         public string ClientLabel
         {
             get { return Header.ClientLabel; }
-            set { Header.ClientLabel = value; RaisePropertyChanged(); }
+            set { Header.ClientLabel = value; OnPropertyChanged("ClientLabel"); }
         }
 
         public string WellLabel
         {
             get { return Header.WellLabel; }
-            set { Header.WellLabel = value; RaisePropertyChanged(); }
+            set { Header.WellLabel = value; OnPropertyChanged("WellLabel"); }
         }
 
         public string DstLabel
         {
             get { return Header.DstLabel; }
-            set { Header.DstLabel = value; RaisePropertyChanged(); }
+            set { Header.DstLabel = value; OnPropertyChanged("DstLabel"); }
         }
 
         public string SerialLabel
         {
             get { return Header.SerialLabel; }
-            set { Header.SerialLabel = value; RaisePropertyChanged(); }
+            set { Header.SerialLabel = value; OnPropertyChanged("SerialLabel"); }
         }
 
 
         public string DepthLabel 
         {
             get { return Header.DepthLabel; }
-            set { Header.DepthLabel = value; RaisePropertyChanged(); }
+            set { Header.DepthLabel = value; OnPropertyChanged("DepthLabel"); }
         }
 
         public string Position
         {
             get { return Header.PositionLabel; }
-            set { Header.PositionLabel = value; RaisePropertyChanged(); }
+            set { Header.PositionLabel = value; OnPropertyChanged("PositionLabel"); }
         }
 
         public string PresStringFormat 
         {
             get { return Header.PresStringFormat; }
-            set { Header.PresStringFormat = value; RaisePropertyChanged();} 
+            set { Header.PresStringFormat = value; OnPropertyChanged("PresStringFormat");} 
         }
 
         public string TempStringFormat
         {
             get { return Header.TempStringFormat; }
-            set { Header.TempStringFormat = value; RaisePropertyChanged(); } 
+            set { Header.TempStringFormat = value; OnPropertyChanged("TempStringFormat"); } 
         }
 
         #endregion
@@ -75,37 +75,37 @@ namespace SRO_Management.ViewModels
         public string ClientInput
         {
             get { return Header.ClientInput; }
-            set { Header.ClientInput = value; RaisePropertyChanged(); }
+            set { Header.ClientInput = value; OnPropertyChanged("ClientInput"); }
         }
 
         public string WellInput
         {
             get { return Header.WellInput; }
-            set { Header.WellInput = value; RaisePropertyChanged(); }
+            set { Header.WellInput = value; OnPropertyChanged("WellInput"); }
         }
 
         public string DstInput
         {
             get { return Header.DstInput; }
-            set { Header.DstInput = value; RaisePropertyChanged(); }
+            set { Header.DstInput = value; OnPropertyChanged("DstInput"); }
         }
 
         public string SerialInput
         {
             get { return Header.SerialInput; }
-            set { Header.SerialInput = value; RaisePropertyChanged(); ExportDataFilesCommand.RaiseCanExecuteChanged(); }
+            set { Header.SerialInput = value; OnPropertyChanged("SerialInput"); ExportDataFilesCommand.RaiseCanExecuteChanged(); }
         }
 
         public string DepthInput
         {
             get { return Header.DepthInput; }
-            set { Header.DepthInput = value; RaisePropertyChanged(); }
+            set { Header.DepthInput = value; OnPropertyChanged("DepthInput"); }
         }
 
         public string PositionInput
         {
             get { return Header.PositionInput; }
-            set { Header.PositionInput = value; RaisePropertyChanged(); }
+            set { Header.PositionInput = value; OnPropertyChanged("PositionInput"); ExportDataFilesCommand.RaiseCanExecuteChanged(); }
         }
 
 
@@ -116,7 +116,7 @@ namespace SRO_Management.ViewModels
         public string SelectedDirectory
         {
             get { return FileSelect.DirPath; }
-            set { FileSelect.DirPath = value; RaisePropertyChanged(); }
+            set { FileSelect.DirPath = value; OnPropertyChanged("DirPath"); }
         }
         #endregion
 
@@ -131,7 +131,7 @@ namespace SRO_Management.ViewModels
             set 
             { 
                 allDataCb = value;                 
-                RaisePropertyChanged();
+                OnPropertyChanged("AllDataCb");
             }
         }
         
@@ -145,7 +145,7 @@ namespace SRO_Management.ViewModels
                 selectFileType = value;
                 FileSelect.MemFile = null;
                 FileSelect.MultipleFiles = null;
-                RaisePropertyChanged();
+                OnPropertyChanged("SelectFileType");
                 ExportDataFilesCommand.RaiseCanExecuteChanged();
             }
         }
@@ -169,7 +169,7 @@ namespace SRO_Management.ViewModels
             {
                 selectedPresUnit = value;
                 PresStringFormat = selectedPresUnit.ToString();
-                RaisePropertyChanged();
+                OnPropertyChanged("SelectedPresUnit");
             }
         }
 
@@ -193,7 +193,7 @@ namespace SRO_Management.ViewModels
             {
                 selectedTempUnit = value;
                 TempStringFormat = selectedTempUnit.ToString();
-                RaisePropertyChanged();
+                OnPropertyChanged("SelectedTempUnit");
             }
         }
 
@@ -213,7 +213,7 @@ namespace SRO_Management.ViewModels
         public DateTime? FilterStartTime
         {
             get { return filterStartTime; }
-            set { filterStartTime = value; RaisePropertyChanged(); }
+            set { filterStartTime = value; OnPropertyChanged("FilterStartTime"); }
         }
 
 
@@ -222,7 +222,7 @@ namespace SRO_Management.ViewModels
         public DateTime? FilterEndTime
         {
             get { return filterEndTime; }
-            set { filterEndTime = value; RaisePropertyChanged(); }
+            set { filterEndTime = value; OnPropertyChanged("FilterEndTime"); }
         }
         
         
@@ -234,6 +234,22 @@ namespace SRO_Management.ViewModels
         #region Command properties
         public DelegateCommand SelectFilesToExportCommand { get; private set; }
         public DelegateCommand ExportDataFilesCommand { get; private set; }
+
+        public bool NotBusy { get; set; }
+
+        private string progressText;
+        public string ProgressText
+        {
+            get { return progressText; }
+            set { progressText = value; OnPropertyChanged("progressText"); }
+        }
+
+        private int progressValue;
+        public int ProgressValue
+        {
+            get { return progressValue; }
+            set { progressValue = value; OnPropertyChanged("progressValue"); }
+        }                
         #endregion
 
 
@@ -249,6 +265,9 @@ namespace SRO_Management.ViewModels
             SelectedTempUnit = Models.TempUnitSelection.degC;
             //All Data checkbox default value
             AllDataCb = true;
+            //NotBusy set to true, export button enabled.
+            NotBusy = true;
+            ProgressText = "Ready";
 
             SelectFilesToExportCommand = new DelegateCommand(OnSelectFilesToExport, CanSelectFilesToExport);
             ExportDataFilesCommand = new DelegateCommand(OnExportDataFiles, CanExportDataFiles);
@@ -263,6 +282,8 @@ namespace SRO_Management.ViewModels
         private void OnSelectFilesToExport()
         {
             //Call to method with a switch statement that opens the correct OpenFileDialog and returns the filename/filenames to the properties.
+            ProgressValue = 0;
+            ProgressText = "Ready";
             FileSelect.UserFileTypeSelection(SelectFileType);
             ExportDataFilesCommand.RaiseCanExecuteChanged();
         }
@@ -272,8 +293,7 @@ namespace SRO_Management.ViewModels
         #region Export command implementation
         private bool CanExportDataFiles()
         {
-
-            if (Header.SerialInput != null && (FileSelect.MultipleFiles != null || FileSelect.MemFile != null))
+            if ((Header.SerialInput != "" && Header.PositionInput != "") && (FileSelect.MultipleFiles != null || FileSelect.MemFile != null))
             {
                 return true;
             }
@@ -284,33 +304,88 @@ namespace SRO_Management.ViewModels
 
         }
 
-        private void OnExportDataFiles()
+        private async void OnExportDataFiles()
         {
+            NotBusy = false;
+            ProgressText = "Exporting Client Data";
 
             FileSelect.SaveTargetDir(SelectFileType, SerialInput, PositionInput);
 
-            IEnumerable<Models.IDataRecord> readInputFiles;
+            var progress = new Progress<int>(i => ProgressValue = i);
 
-            if (SelectFileType == Models.FileTypes.Memory)
-            {
-                readInputFiles = new Models.MemoryReader(SelectedDirectory, FileSelect.MemFile, SelectFileType);
-            }
-            else
-            {
-                readInputFiles = new Models.SROReader(SelectedDirectory, FileSelect.MultipleFiles, SelectFileType);
-            }
+            await clientDataAsync(progress);
 
-
-            Models.UnitConverter converter = new Models.UnitConverter();
-            IEnumerable<Models.IDataRecord> convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
-
-            Models.SortAndFilterData filter = new Models.SortAndFilterData();
-            IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime);
-
-            Models.CsvWriter writer = new Models.CsvWriter();
-            writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);
-
+            ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
             ExportDataFilesCommand.RaiseCanExecuteChanged();
+            NotBusy = true;          
+        }
+
+
+        private Task clientDataAsync(IProgress<int> progress)
+        {
+            return Task.Run(() =>
+                {
+                    try
+                    {
+                        int i = 0;
+
+                        IEnumerable<Models.IDataRecord> readInputFiles;
+
+                        if (SelectFileType == Models.FileTypes.Memory)
+                        {
+                            readInputFiles = new Models.MemoryReader(SelectedDirectory, FileSelect.MemFile, SelectFileType);
+                        }
+                        else
+                        {
+                            readInputFiles = new Models.SROReader(SelectedDirectory, FileSelect.MultipleFiles, SelectFileType);
+                        }
+
+                        i = 25;
+                        progress.Report(i);
+                        
+                        Models.UnitConverter converter = new Models.UnitConverter();
+                        IEnumerable<Models.IDataRecord> convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
+
+                        i = 50;
+                        progress.Report(i);
+
+                        Models.SortAndFilterData filter = new Models.SortAndFilterData();
+                        IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime);
+
+                        i = 75;
+                        progress.Report(i);
+
+                        Models.CsvWriter writer = new Models.CsvWriter();
+                        writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);                 
+
+                        i = 100;
+                        progress.Report(i);
+                    }
+                    catch (FormatException formEx)
+                    {
+                        System.Windows.MessageBox.Show("Export Failed! Please select valid data file(s) (CW Duplex or later)");
+                        System.Diagnostics.Trace.WriteLine(DateTime.Now + formEx.ToString());
+                        FileSelect.MemFile = null;
+                        FileSelect.MultipleFiles = null;
+                    }
+                    catch(UnauthorizedAccessException accEx)
+                    {
+                        System.Windows.MessageBox.Show("Export Failed! Please choose a valid filename and save location");
+                        System.Diagnostics.Trace.WriteLine(DateTime.Now + accEx.ToString());
+                        FileSelect.MemFile = null;
+                        FileSelect.MultipleFiles = null;
+                    }
+                    catch(Exception genEx)
+                    {
+                        System.Windows.MessageBox.Show("Export Failed! Email: dave.pollock@exprogroup.com for further support");
+                        System.Diagnostics.Trace.WriteLine(DateTime.Now + genEx.ToString());
+                        FileSelect.MemFile = null;
+                        FileSelect.MultipleFiles = null;
+                    }
+                    
+                });
+            
+            
         }
         #endregion
 
