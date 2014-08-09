@@ -235,7 +235,12 @@ namespace SRO_Management.ViewModels
         public DelegateCommand SelectFilesToExportCommand { get; private set; }
         public DelegateCommand ExportDataFilesCommand { get; private set; }
 
-        public bool NotBusy { get; set; }
+        private bool notBusy;
+        public bool NotBusy
+        {
+            get { return notBusy; }
+            set { notBusy = value; OnPropertyChanged("notBusy"); }
+        }
 
         private string progressText;
         public string ProgressText
@@ -327,7 +332,6 @@ namespace SRO_Management.ViewModels
                 {
                     try
                     {
-                        int i = 0;
 
                         IEnumerable<Models.IDataRecord> readInputFiles;
 
@@ -340,26 +344,22 @@ namespace SRO_Management.ViewModels
                             readInputFiles = new Models.SROReader(SelectedDirectory, FileSelect.MultipleFiles, SelectFileType);
                         }
 
-                        i = 25;
-                        progress.Report(i);
+                        progress.Report(25);
                         
                         Models.UnitConverter converter = new Models.UnitConverter();
                         IEnumerable<Models.IDataRecord> convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
 
-                        i = 50;
-                        progress.Report(i);
+                        progress.Report(50);
 
                         Models.SortAndFilterData filter = new Models.SortAndFilterData();
                         IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime);
 
-                        i = 75;
-                        progress.Report(i);
+                        progress.Report(75);
 
                         Models.CsvWriter writer = new Models.CsvWriter();
                         writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);                 
 
-                        i = 100;
-                        progress.Report(i);
+                        progress.Report(100);
                     }
                     catch (FormatException formEx)
                     {
