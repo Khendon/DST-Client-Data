@@ -12,7 +12,7 @@ namespace SRO_Management.Models
     /// </summary>
     public interface IDataRecord
     {
-        DateTime? TimeStamp { get; set; }
+        DateTime TimeStamp { get; set; }
         double? Pressure { get; set; }
         double? Temperature { get; set; }
     }

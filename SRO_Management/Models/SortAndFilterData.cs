@@ -9,17 +9,19 @@ namespace SRO_Management.Models
     public class SortAndFilterData
     {
         
-        public IEnumerable<IDataRecord> ChooseFilters(IEnumerable<IDataRecord> unfilteredRecords, bool allDataCheck, DateTime? filterStart, DateTime? filterEnd)
+        public IEnumerable<IDataRecord> ChooseFilters(IEnumerable<IDataRecord> unfilteredRecords, bool allDataCheck, DateTime? filterStart, DateTime? filterEnd, string shiftDirection, TimeSpan linearShift)
         {
             IEnumerable<IDataRecord> sortedRecords = SortRecords(unfilteredRecords);
 
             if(allDataCheck)
-            {                
-                return sortedRecords;
+            {
+                var shiftedRecords = shiftTimeStamp(sortedRecords, shiftDirection, linearShift);
+                return shiftedRecords;
             }
             else
             {
-                IEnumerable<IDataRecord> filteredRecords = TimeFilterRecords(unfilteredRecords, filterStart, filterEnd);
+                var shiftedRecords = shiftTimeStamp(sortedRecords, shiftDirection, linearShift);
+                var filteredRecords = TimeFilterRecords(shiftedRecords, filterStart, filterEnd);
                 return filteredRecords;
             }
         }
@@ -49,17 +51,44 @@ namespace SRO_Management.Models
         private IEnumerable<IDataRecord> SortRecords(IEnumerable<IDataRecord> unsortedRecords)
         {
 
-            List<IDataRecord> filteredRecords = unsortedRecords
+            List<IDataRecord> dupesRemoved = unsortedRecords
                 .GroupBy(record => record.TimeStamp)
                 .Select(t => t.First())
                 .ToList();
 
-            var sortedRecords = from record in filteredRecords
+            var sortedRecords = from record in dupesRemoved
                                 orderby record.TimeStamp
                                 select record;
 
-            return sortedRecords;
+            var blanksRemoved = from record in sortedRecords
+                                where (record.TimeStamp != DateTime.MinValue)
+                                select record;
+                                 
 
+            return blanksRemoved;
+
+        }
+
+        private IEnumerable<IDataRecord> shiftTimeStamp(IEnumerable<IDataRecord> unShiftedRecords, string selectedShift, TimeSpan linearShift)
+        {
+            if (selectedShift == "+")
+            {
+                foreach (var record in unShiftedRecords)
+                {
+                    record.TimeStamp = record.TimeStamp.Add(linearShift);
+                }
+
+                return unShiftedRecords;
+            }
+            else
+            {
+                foreach (var record in unShiftedRecords)
+                {
+                    record.TimeStamp = record.TimeStamp.Subtract(linearShift);
+                }
+
+                return unShiftedRecords;
+            }
         }
         
     }

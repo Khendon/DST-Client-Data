@@ -35,4 +35,6 @@ namespace SRO_Management.Models
         [Description("Memory")]
         Memory
     };
+
+    
 }
