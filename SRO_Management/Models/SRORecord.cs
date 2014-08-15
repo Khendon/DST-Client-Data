@@ -27,7 +27,7 @@ namespace SRO_Management.Models
         public string infoColumn { get; set; }
 
         // Explicit implementation of IDataRecord interface.
-        DateTime? IDataRecord.TimeStamp 
+        DateTime IDataRecord.TimeStamp 
         { 
             get { return FormatTimeStamp(TimeStamp); }
             set { TimeStamp = value.ToString(); }
@@ -46,24 +46,20 @@ namespace SRO_Management.Models
         }
 
 
-        /// <summary>
-        /// Converts input string to Nullable<DateTime> format, or to null if invalid. Only used via IDataRecord interface.
-        /// </summary>
-        /// <param name="rawTimeStamp"></param>
-        /// <returns>Nullable<DateTime></returns>
-        private DateTime? FormatTimeStamp(string rawTimeStamp)
+        private DateTime FormatTimeStamp(string rawTimeStamp)
         {
-            DateTime? convertInputFormat;
+            DateTime convertInputFormat;
 
             try
             {
                 if (rawTimeStamp.Contains("End"))
                 {
-                    return convertInputFormat = null;
+                    return DateTime.MinValue;
                 }
                 else
                 {
-                    convertInputFormat = DateTime.ParseExact(rawTimeStamp.Trim('\"'), "dd MMM yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+                    //convertInputFormat = DateTime.ParseExact(rawTimeStamp.Trim('\"'), "dd MMM yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+                    DateTime.TryParse(rawTimeStamp.Trim('\"'), out convertInputFormat);
 
                     return convertInputFormat;
                 }

@@ -224,6 +224,47 @@ namespace SRO_Management.ViewModels
             get { return filterEndTime; }
             set { filterEndTime = value; OnPropertyChanged("FilterEndTime"); }
         }
+
+        private int shiftHours;
+        public int ShiftHours
+        {
+            get { return shiftHours; }
+            set { shiftHours = value; OnPropertyChanged("shiftHours"); }
+        }
+
+        private int shiftMins;
+        public int ShiftMins
+        {
+            get { return shiftMins; }
+            set { shiftMins = value; OnPropertyChanged("shiftMins"); }
+        }
+
+        private int shiftSecs;
+        public int ShiftSecs
+        {
+            get { return shiftSecs; }
+            set { shiftSecs = value; OnPropertyChanged("shiftSecs"); }
+        }
+
+        private string[] shiftDirection = {"+", "-"};
+        public string[] ShiftDirection
+        {
+            get { return shiftDirection; }
+            set { shiftDirection = value; }
+        }
+
+        private string selectedShift;
+        public string SelectedShift
+        {
+            get { return selectedShift; }
+            set { selectedShift = value; OnPropertyChanged("selectedShift"); }
+        }
+        
+        
+        
+        
+        
+        
         
         
 
@@ -272,7 +313,10 @@ namespace SRO_Management.ViewModels
             AllDataCb = true;
             //NotBusy set to true, export button enabled.
             NotBusy = true;
+            // Progress bar text info
             ProgressText = "Ready";
+            // default selected linear time shift direction
+            SelectedShift = ShiftDirection[0];
 
             SelectFilesToExportCommand = new DelegateCommand(OnSelectFilesToExport, CanSelectFilesToExport);
             ExportDataFilesCommand = new DelegateCommand(OnExportDataFiles, CanExportDataFiles);
@@ -320,7 +364,6 @@ namespace SRO_Management.ViewModels
 
             await clientDataAsync(progress);
 
-            ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
             ExportDataFilesCommand.RaiseCanExecuteChanged();
             NotBusy = true;          
         }
@@ -351,8 +394,9 @@ namespace SRO_Management.ViewModels
 
                         progress.Report(50);
 
+                        TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
                         Models.SortAndFilterData filter = new Models.SortAndFilterData();
-                        IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime);
+                        IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
 
                         progress.Report(75);
 
@@ -360,11 +404,14 @@ namespace SRO_Management.ViewModels
                         writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);                 
 
                         progress.Report(100);
+                        ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
                     }
                     catch (FormatException formEx)
                     {
                         System.Windows.MessageBox.Show("Export Failed! Please select valid data file(s) (CW Duplex or later)");
                         System.Diagnostics.Trace.WriteLine(DateTime.Now + formEx.ToString());
+                        progress.Report(0);
+                        ProgressText = "Ready";
                         FileSelect.MemFile = null;
                         FileSelect.MultipleFiles = null;
                     }
@@ -372,6 +419,8 @@ namespace SRO_Management.ViewModels
                     {
                         System.Windows.MessageBox.Show("Export Failed! Please choose a valid filename and save location");
                         System.Diagnostics.Trace.WriteLine(DateTime.Now + accEx.ToString());
+                        progress.Report(0);
+                        ProgressText = "Ready";
                         FileSelect.MemFile = null;
                         FileSelect.MultipleFiles = null;
                     }
@@ -379,6 +428,8 @@ namespace SRO_Management.ViewModels
                     {
                         System.Windows.MessageBox.Show("Export Failed! Email: dave.pollock@exprogroup.com for further support");
                         System.Diagnostics.Trace.WriteLine(DateTime.Now + genEx.ToString());
+                        progress.Report(0);
+                        ProgressText = "Ready";
                         FileSelect.MemFile = null;
                         FileSelect.MultipleFiles = null;
                     }
