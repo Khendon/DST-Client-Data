@@ -154,3 +154,12 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+Installer/DST Client Data Exporter-SetupFiles/DST Client Data Exporter.msi
+Installer/DST Client Data Exporter-cache/cacheIndex.txt
+Installer/DST Client Data Exporter-cache/part1/disk1.cab
+Installer/DST Client Data Exporter-cache/part1/output-info.ini
+Installer/DST Client Data Exporter-cache/part2/disk1.cab
+Installer/DST Client Data Exporter-cache/part2/output-info.ini
+Installer/DST Client Data Exporter.back.aip
+Installer/DST Client Data Exporter-cache/part4/disk1.cab
+Installer/DST Client Data Exporter-cache/part4/output-info.ini

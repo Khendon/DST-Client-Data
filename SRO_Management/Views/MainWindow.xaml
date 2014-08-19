@@ -5,7 +5,7 @@
         xmlns:core="clr-namespace:System;assembly=mscorlib"
         xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Icon="{StaticResource logoIcon}" 
-        Title="Client Data Exporter" Height="470" Width="360" ResizeMode="NoResize">
+        Title="DST Client Data Exporter" Height="470" Width="360" ResizeMode="NoResize">
     <Window.Resources>
         <vm:BoolConverter x:Key="BoolConverter"/>
     </Window.Resources>
@@ -16,7 +16,7 @@
 
     <DockPanel>
         <!--Header Groupbox-->
-        <GroupBox Margin="5,5,5,3" DockPanel.Dock="Top" Header="File Header" FontFamily="Arial" BorderThickness="2" BorderBrush="#FFBDBDBD" Foreground="#FF1D89B2" FontSize="14" FontWeight="Bold">
+        <GroupBox Margin="5,5,5,3" DockPanel.Dock="Top" Header="Job Information" FontFamily="Arial" BorderThickness="2" BorderBrush="#FFBDBDBD" Foreground="#FF1D89B2" FontSize="14" FontWeight="Bold">
             <Grid Name="headerGrid" Margin="0,0,0,-2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -53,12 +53,12 @@
             </Grid>
         </GroupBox>
 
-        <StatusBar DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0,0,5,0">
+        <StatusBar DockPanel.Dock="Bottom" Margin="0,0,5,0">
             <StatusBarItem>
                 <TextBlock Width="200" Margin="0,0,10,0" Text="{Binding ProgressText}" VerticalAlignment="Center" FontSize="11" TextAlignment="Right" FontStyle="Italic"/>
             </StatusBarItem>
-            <StatusBarItem>
-                <ProgressBar Width="80" Value="{Binding ProgressValue}" Height="15" Background="LightGray"/>
+            <StatusBarItem HorizontalContentAlignment="Stretch">
+                <ProgressBar Value="{Binding ProgressValue}" Height="15" Background="LightGray"/>
             </StatusBarItem>
         </StatusBar>
 
@@ -69,7 +69,7 @@
         </StackPanel>
 
         <!--Filter Groupbox-->
-        <GroupBox  Margin="5,2,5,3" Header="Filter" FontFamily="Arial" BorderThickness="2" BorderBrush="#FFBDBDBD" Foreground="#FF1D89B2" FontSize="14" FontWeight="Bold">
+        <GroupBox  Margin="5,2,5,3" Header="Export Settings" FontFamily="Arial" BorderThickness="2" BorderBrush="#FFBDBDBD" Foreground="#FF1D89B2" FontSize="14" FontWeight="Bold">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
