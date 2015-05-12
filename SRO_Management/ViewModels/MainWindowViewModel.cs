@@ -376,36 +376,36 @@ namespace SRO_Management.ViewModels
                     try
                     {
 
-                        IEnumerable<Models.IDataRecord> readInputFiles;
+                        //IEnumerable<Models.IDataRecord> readInputFiles;
 
                         if (SelectFileType == Models.FileTypes.Memory)
                         {
                             //readInputFiles = new Models.MemoryReader(SelectedDirectory, FileSelect.MemFile, SelectFileType);
-                            readInputFiles = null;
+                            //readInputFiles = null;
                         }
                         else
                         {
-                            readInputFiles = new Models.SROReader(SelectedDirectory, FileSelect.MultipleFiles, SelectFileType);
+                            Models.CsvReader readInputFiles = new Models.CsvReader(SelectedDirectory, FileSelect.MultipleFiles, SelectFileType);
                         }
 
-                        progress.Report(25);
+                        //progress.Report(25);
                         
-                        Models.UnitConverter converter = new Models.UnitConverter();
-                        IEnumerable<Models.IDataRecord> convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
+                        //Models.UnitConverter converter = new Models.UnitConverter();
+                        //IEnumerable<Models.IDataRecord> convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
 
-                        progress.Report(50);
+                        //progress.Report(50);
 
-                        TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
-                        Models.SortAndFilterData filter = new Models.SortAndFilterData();
-                        IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
+                        //TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
+                        //Models.SortAndFilterData filter = new Models.SortAndFilterData();
+                        //IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
 
-                        progress.Report(75);
+                        //progress.Report(75);
 
-                        Models.CsvWriter writer = new Models.CsvWriter();
-                        writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);                 
+                        //Models.CsvWriter writer = new Models.CsvWriter();
+                        //writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);                 
 
-                        progress.Report(100);
-                        ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
+                        //progress.Report(100);
+                        //ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
                     }
                     catch (FormatException formEx)
                     {

@@ -37,6 +37,20 @@
     <Reference Include="Essential.Diagnostics">
       <HintPath>..\packages\Essential.Diagnostics.1.2.501.0\lib\Essential.Diagnostics.dll</HintPath>
     </Reference>
+    <Reference Include="FileHelpers">
+      <HintPath>..\packages\FileHelpers.2.0.0.0\lib\FileHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="FileHelpers.ExcelStorage">
+      <HintPath>..\packages\FileHelpers.2.0.0.0\lib\FileHelpers.ExcelStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.Excel">
+      <HintPath>..\packages\FileHelpers.2.0.0.0\lib\Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Interop.Office">
+      <HintPath>..\packages\FileHelpers.2.0.0.0\lib\Interop.Office.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.Practices.Prism.Composition">
       <HintPath>..\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>
     </Reference>
@@ -108,17 +122,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\CsvReader.cs" />
     <Compile Include="Models\CsvWriter.cs" />
+    <Compile Include="Models\DateFieldConverter.cs" />
+    <Compile Include="Models\HistRecord.cs" />
     <Compile Include="Models\NullableTypeConverter.cs" />
     <Compile Include="Models\SelectionEnums.cs" />
     <Compile Include="Models\FileSelectModel.cs" />
     <Compile Include="Models\HeaderModel.cs" />
     <Compile Include="Models\SortAndFilterData.cs" />
-    <Compile Include="Models\SROReader.cs" />
     <Compile Include="Models\IDataRecord.cs" />
-    <Compile Include="Models\SRORecord.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Models\UnitConverter.cs" />
     <Compile Include="ViewModels\BoolConverter.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
