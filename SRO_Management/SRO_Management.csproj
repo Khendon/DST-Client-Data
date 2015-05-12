@@ -34,9 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CsvHelper">
-      <HintPath>..\packages\CsvHelper.2.7.0\lib\net40-client\CsvHelper.dll</HintPath>
-    </Reference>
     <Reference Include="Essential.Diagnostics">
       <HintPath>..\packages\Essential.Diagnostics.1.2.501.0\lib\Essential.Diagnostics.dll</HintPath>
     </Reference>
@@ -114,15 +111,14 @@
     <Compile Include="Models\CsvWriter.cs" />
     <Compile Include="Models\NullableTypeConverter.cs" />
     <Compile Include="Models\SelectionEnums.cs" />
-    <Compile Include="Models\CsvStreamCreator.cs" />
     <Compile Include="Models\FileSelectModel.cs" />
     <Compile Include="Models\HeaderModel.cs" />
-    <Compile Include="Models\MemoryReader.cs" />
     <Compile Include="Models\SortAndFilterData.cs" />
     <Compile Include="Models\SROReader.cs" />
-    <Compile Include="Models\SRORecord.cs" />
     <Compile Include="Models\IDataRecord.cs" />
-    <Compile Include="Models\MemoryRecord.cs" />
+    <Compile Include="Models\SRORecord.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Models\UnitConverter.cs" />
     <Compile Include="ViewModels\BoolConverter.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

@@ -380,7 +380,8 @@ namespace SRO_Management.ViewModels
 
                         if (SelectFileType == Models.FileTypes.Memory)
                         {
-                            readInputFiles = new Models.MemoryReader(SelectedDirectory, FileSelect.MemFile, SelectFileType);
+                            //readInputFiles = new Models.MemoryReader(SelectedDirectory, FileSelect.MemFile, SelectFileType);
+                            readInputFiles = null;
                         }
                         else
                         {

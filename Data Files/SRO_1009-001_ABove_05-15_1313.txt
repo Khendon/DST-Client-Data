@@ -1,0 +1,9 @@
+Client, 
+Well, 
+DST No., 
+Serial No., 1009
+Depth, 
+Position, Above
+
+Date Time, Pressure, Temperature
+DD/MM/YYYY HH:MM:SS, psia, degC

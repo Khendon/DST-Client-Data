@@ -4,42 +4,47 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using CsvHelper;
 
 namespace SRO_Management.Models
 {
     public class SROReader : IEnumerable<IDataRecord>
     {
-        private List<SRORecord> sroRecords = new List<SRORecord>();
+
+        private IEnumerable<SRORecord> SroRecords;
 
         public SROReader(string dirPath, List<string> fileNames, FileTypes userFileType)
         {
             ParseRecords(dirPath, fileNames, userFileType);
+            SroRecords = new List<SRORecord>();
         }
 
         private void ParseRecords(string dirPath, List<string> fileNames, FileTypes userFileType)
         {
-            CsvStreamCreator csvStreamCreate = new CsvStreamCreator();
+            Regex sroRegex = new Regex(@"^(?<number>\d+),(?<source>\d:\d),(?<timestamp>\d{1,2} \w{2,4} \d{4} \d{1,2}:\d{2}:\d{2}),((?<pressure>\d+\.\d+)?|(?<pError>Err:\w+)?)?,(?<pPrecision>\s±\d+.\d+)?,((?<temp>\d+\.\d+)?|(?<tError>Err:\w+)?)?");
 
             foreach (var fileName in fileNames)
             {
                 try
                 {
-                    TextReader inputStream = new StreamReader(dirPath + "\\" + fileName);
-                    inputStream.ReadLine();
-                    inputStream.ReadLine();
-                    inputStream.ReadLine();
-
-                    using (var csv = csvStreamCreate.CsvStream(inputStream, userFileType))
+                    using ( StreamReader inputStream = new StreamReader(dirPath + "\\" + fileName))
                     {
-                        var records = csv.GetRecords<SRORecord>();
-
-                        foreach (var record in records)
+                        string line;
+                        while ((line = inputStream.ReadLine()) != null)
                         {
-                            sroRecords.Add(record);
+                            Match validRecord = sroRegex.Match(line);
+
+                            if (validRecord.Success)
+                            {
+                                SRORecord record = new SRORecord();
+                                record.Count = validRecord.Groups["number"].Value;
+                                record.Source = validRecord.Groups["source"].Value;
+                                record.TimeStamp = validRecord.Groups["timestamp"].Value;
+                                record.Pressure = validRecord.Groups["pressure"].Value;
+                            }
                         }
-                    }
+                    }                
 
                 }
                 catch (Exception sroEx)
@@ -54,7 +59,7 @@ namespace SRO_Management.Models
 
         public IEnumerator<IDataRecord> GetEnumerator()
         {
-            return sroRecords.GetEnumerator();
+            return SroRecords.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

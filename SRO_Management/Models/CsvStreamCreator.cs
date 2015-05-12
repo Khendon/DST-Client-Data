@@ -12,18 +12,18 @@ namespace SRO_Management.Models
     public class CsvStreamCreator
     {
 
-        private CsvConfiguration MemReaderConfig()
-        {
-            CsvConfiguration config = new CsvConfiguration();
-            config.Delimiter = ",";
-            config.IgnoreQuotes = true;
-            config.QuoteNoFields = true;
-            config.WillThrowOnMissingField = false;
-            config.TrimFields = true;
-            config.RegisterClassMap<MemRecordClassMap>();
+        //private CsvConfiguration MemReaderConfig()
+        //{
+        //    CsvConfiguration config = new CsvConfiguration();
+        //    config.Delimiter = ",";
+        //    config.IgnoreQuotes = true;
+        //    config.QuoteNoFields = true;
+        //    config.WillThrowOnMissingField = false;
+        //    config.TrimFields = true;
+        //    config.RegisterClassMap<MemRecordClassMap>();
 
-            return config;
-        }
+        //    return config;
+        //}
 
         private CsvConfiguration SROReaderConfig()
         {
@@ -46,7 +46,8 @@ namespace SRO_Management.Models
             switch (userSelectedFileType)
             {
                 case FileTypes.Memory:
-                    config = MemReaderConfig();
+                    //config = MemReaderConfig();
+                    config = SROReaderConfig();
                     break;
                 case FileTypes.SRO:
                     config = SROReaderConfig();
