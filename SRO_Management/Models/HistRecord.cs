@@ -9,7 +9,7 @@ namespace SRO_Management.Models
 {
     [DelimitedRecord(",")]
     [IgnoreFirst(4)]
-    public class HistRecord
+    public class HistRecord : IDataRecord
     {
         public string Count;
 
@@ -33,5 +33,25 @@ namespace SRO_Management.Models
         public string logIndex;
 
         public string status;
+
+
+        // IDataRecord interface implementation
+        DateTime IDataRecord.TimeStamp
+        {
+            get { return TimeStamp; }
+            set { TimeStamp = value; }
+        }
+
+        double IDataRecord.Pressure
+        {
+            get { return Pressure; }
+            set { Pressure = value; }
+        }
+
+        double IDataRecord.Temperature
+        {
+            get { return Temperature; }
+            set { Temperature = value; }
+        }
     }
 }

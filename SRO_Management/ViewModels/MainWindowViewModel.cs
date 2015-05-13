@@ -376,16 +376,14 @@ namespace SRO_Management.ViewModels
                     try
                     {
 
-                        //IEnumerable<Models.IDataRecord> readInputFiles;
+                        IEnumerable<Models.IDataRecord> readInputFiles;                       
+                        
+                        readInputFiles = new Models.CsvReader(SelectedDirectory, FileSelect.MultipleFiles, SelectFileType);
+                        
 
-                        if (SelectFileType == Models.FileTypes.Memory)
+                        foreach (var record in readInputFiles)
                         {
-                            //readInputFiles = new Models.MemoryReader(SelectedDirectory, FileSelect.MemFile, SelectFileType);
-                            //readInputFiles = null;
-                        }
-                        else
-                        {
-                            Models.CsvReader readInputFiles = new Models.CsvReader(SelectedDirectory, FileSelect.MultipleFiles, SelectFileType);
+                            System.Diagnostics.Debug.WriteLine(record.TimeStamp + ", " + record.Pressure);
                         }
 
                         //progress.Report(25);

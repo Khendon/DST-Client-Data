@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FileHelpers;
+using System.Collections;
 
 namespace SRO_Management.Models
 {
-    public class CsvReader
+    public class CsvReader : IEnumerable<IDataRecord>
     {
+
+        IEnumerable<HistRecord> histRecords;
 
         public CsvReader(string dirPath, List<string> fileNames, FileTypes userFileType)
         {
@@ -23,20 +26,25 @@ namespace SRO_Management.Models
 
             foreach (var file in fileNames)
             {
-                HistRecord[] records = parser.ReadFile(dirPath + "\\" + file) as HistRecord[];
-
-                foreach (var record in records)
-                {
-                    System.Diagnostics.Debug.WriteLine(record.TimeStamp.ToString());
-                }
+                histRecords = parser.ReadFile(System.IO.Path.Combine(dirPath,file)) as HistRecord[];
             }
 
             if (parser.ErrorManager.HasErrors)
             {
-                parser.ErrorManager.SaveErrors("errors.txt");
+                parser.ErrorManager.SaveErrors(System.IO.Path.Combine(dirPath,"errors.txt"));
             }
-
         }
+        public IEnumerator<IDataRecord> GetEnumerator()
+        {
+            return histRecords.GetEnumerator();
+        }
+
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
 
     }
 }
