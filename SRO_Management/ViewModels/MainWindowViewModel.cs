@@ -378,7 +378,7 @@ namespace SRO_Management.ViewModels
 
                         IEnumerable<Models.IDataRecord> readInputFiles;                       
                         
-                        readInputFiles = new Models.CsvReader(SelectedDirectory, FileSelect.MultipleFiles, SelectFileType);
+                        readInputFiles = new Models.HistReader(SelectedDirectory, FileSelect.MultipleFiles);
                         
 
                         foreach (var record in readInputFiles)

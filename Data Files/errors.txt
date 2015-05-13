@@ -1,0 +1,11 @@
+FileHelpers - Errors Saved at 13 May 2015 22:37:16
+LineNumber | LineString |ErrorDescription
+7|3,0:0,14 Apr 2015 15:27:22,Err:Pressure, ±0.01,,,2,H!?|In the field 'Pressure': Line: 7. Column: 28. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 
+8|4,0:0,14 Apr 2015 15:27:23,Err:Pressure, ±0.01,,,3,H!?|In the field 'Pressure': Line: 8. Column: 28. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 
+9|5,0:0,14 Apr 2015 15:27:24,Err:Pressure, ±0.01,,,4,H!?|In the field 'Pressure': Line: 9. Column: 28. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 
+10|6,0:0,14 Apr 2015 15:27:25,Err:Pressure, ±0.01,,,5,H!?|In the field 'Pressure': Line: 10. Column: 28. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 
+11|7,0:0,14 Apr 2015 15:27:26,Err:Pressure, ±0.01,,,6,H!?|In the field 'Pressure': Line: 11. Column: 28. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 
+12|8,0:0,14 Apr 2015 15:27:27,Err:Pressure, ±0.01,,,7,H!?|In the field 'Pressure': Line: 12. Column: 28. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 
+13|9,0:0,14 Apr 2015 15:27:28,Err:Pressure, ±0.01,,,8,H!|In the field 'Pressure': Line: 13. Column: 28. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 
+14|10,0:0,14 Apr 2015 15:27:29,Err:Pressure, ±0.01,,,9,H!|In the field 'Pressure': Line: 14. Column: 29. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 
+15|11,0:0,14 Apr 2015 15:27:30,Err:Pressure, ±0.01,,,10,H!|In the field 'Pressure': Line: 15. Column: 29. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 

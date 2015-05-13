@@ -122,7 +122,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Models\CsvReader.cs" />
+    <Compile Include="Models\HistReader.cs" />
     <Compile Include="Models\CsvWriter.cs" />
     <Compile Include="Models\DateFieldConverter.cs" />
     <Compile Include="Models\HistRecord.cs" />

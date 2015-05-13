@@ -8,17 +8,18 @@ using System.Collections;
 
 namespace SRO_Management.Models
 {
-    public class CsvReader : IEnumerable<IDataRecord>
+    public class HistReader : IEnumerable<IDataRecord>
     {
 
-        IEnumerable<HistRecord> histRecords;
+        private List<HistRecord> histRecords { get; set; }
 
-        public CsvReader(string dirPath, List<string> fileNames, FileTypes userFileType)
+        public HistReader(string dirPath, List<string> fileNames)
         {
-            ParseRecords(dirPath, fileNames, userFileType);
+            histRecords = new List<HistRecord>();
+            ParseRecords(dirPath, fileNames);
         }
 
-        public void ParseRecords(string dirPath, List<string> fileNames, FileTypes userFileType)
+        public void ParseRecords(string dirPath, List<string> fileNames)
         {
             FileHelperEngine parser = new FileHelperEngine(typeof(HistRecord));
 
@@ -26,7 +27,12 @@ namespace SRO_Management.Models
 
             foreach (var file in fileNames)
             {
-                histRecords = parser.ReadFile(System.IO.Path.Combine(dirPath,file)) as HistRecord[];
+                var records = parser.ReadFile(System.IO.Path.Combine(dirPath, file)) as HistRecord[];
+
+                foreach (var record in records)
+                {
+                    histRecords.Add(record);
+                }
             }
 
             if (parser.ErrorManager.HasErrors)
@@ -34,6 +40,8 @@ namespace SRO_Management.Models
                 parser.ErrorManager.SaveErrors(System.IO.Path.Combine(dirPath,"errors.txt"));
             }
         }
+
+
         public IEnumerator<IDataRecord> GetEnumerator()
         {
             return histRecords.GetEnumerator();

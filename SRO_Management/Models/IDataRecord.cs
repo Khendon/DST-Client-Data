@@ -8,7 +8,6 @@ namespace SRO_Management.Models
 {
     /// <summary>
     /// Interface implemented by SRORecord and MemoryRecord classes. Used to "filter" only pertinent info required for client data files
-    /// and for conversion to different units.
     /// </summary>
     public interface IDataRecord
     {
