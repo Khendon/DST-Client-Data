@@ -378,12 +378,12 @@ namespace SRO_Management.ViewModels
 
                         IEnumerable<Models.IDataRecord> readInputFiles;                       
                         
-                        readInputFiles = new Models.HistReader(SelectedDirectory, FileSelect.MultipleFiles);
+                        readInputFiles = new Models.MemReader(SelectedDirectory, FileSelect.MemFile);
                         
 
                         foreach (var record in readInputFiles)
                         {
-                            System.Diagnostics.Debug.WriteLine(record.TimeStamp + ", " + record.Pressure);
+                            System.Diagnostics.Debug.WriteLine(record.TimeStamp + ", " + record.Pressure + ", " + record.Temperature);
                         }
 
                         //progress.Report(25);

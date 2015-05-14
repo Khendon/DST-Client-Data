@@ -43,10 +43,6 @@
     <Reference Include="FileHelpers.ExcelStorage">
       <HintPath>..\packages\FileHelpers.2.0.0.0\lib\FileHelpers.ExcelStorage.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.Excel">
-      <HintPath>..\packages\FileHelpers.2.0.0.0\lib\Interop.Excel.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Interop.Office">
       <HintPath>..\packages\FileHelpers.2.0.0.0\lib\Interop.Office.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -77,7 +73,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -122,10 +117,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Models\HistReader.cs" />
+    <Compile Include="Models\MemReader.cs" />
+    <Compile Include="Models\MemRecord.cs" />
+    <Compile Include="Models\SROReader.cs" />
     <Compile Include="Models\CsvWriter.cs" />
     <Compile Include="Models\DateFieldConverter.cs" />
-    <Compile Include="Models\HistRecord.cs" />
+    <Compile Include="Models\SRORecord.cs" />
     <Compile Include="Models\NullableTypeConverter.cs" />
     <Compile Include="Models\SelectionEnums.cs" />
     <Compile Include="Models\FileSelectModel.cs" />

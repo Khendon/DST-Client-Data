@@ -1,36 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FileHelpers;
+
 
 namespace SRO_Management.Models
 {
     [DelimitedRecord(",")]
-    [IgnoreFirst(4)]
-    public class HistRecord : IDataRecord
+    [IgnoreFirst(3)]
+    public class MemRecord : IDataRecord
     {
         public string Count;
 
-        public string Source;
+        public string PnTRef;
 
         [FieldConverter(typeof(DateFieldConverter))]
         public DateTime TimeStamp;
 
         [FieldConverter(ConverterKind.Double, ".")]
-        [FieldNullValue(typeof(double), "-1")]
-        public double Pressure;
-
-        public string pPrecision;
+        public double? Pressure;
 
         [FieldConverter(ConverterKind.Double, ".")]
-        [FieldNullValue(typeof(double), "-1")]
-        public double Temperature;
-
-        public string tPrecision;
-
-        public string logIndex;
+        public double? Temperature;
 
         public string status;
 
@@ -42,13 +31,13 @@ namespace SRO_Management.Models
             set { TimeStamp = value; }
         }
 
-        double IDataRecord.Pressure
+        double? IDataRecord.Pressure
         {
             get { return Pressure; }
             set { Pressure = value; }
         }
 
-        double IDataRecord.Temperature
+        double? IDataRecord.Temperature
         {
             get { return Temperature; }
             set { Temperature = value; }

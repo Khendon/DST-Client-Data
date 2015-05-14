@@ -86,23 +86,22 @@ namespace SRO_Management.Models
         /// <returns>IEnumerable<IDataRecord></returns>
         public IEnumerable<IDataRecord> ConvertUnits(IEnumerable<IDataRecord> rawRecords, PresUnitSelection pressureUnit, TempUnitSelection tempUnit)
         {
-            foreach(var record in rawRecords)
+            foreach (var record in rawRecords)
             {
-                if(record.Pressure != null)
+                if (record.Pressure != null)
                 {
                     double pressure = Convert.ToDouble(record.Pressure);
                     record.Pressure = PressureConvert(pressure, pressureUnit);
                 }
 
-                if(record.Temperature != null)
+                if (record.Temperature != null)
                 {
                     double temp = Convert.ToDouble(record.Temperature);
                     record.Temperature = TempConvert(temp, tempUnit);
                 }
             }
 
-            return rawRecords;
-                
+            return rawRecords;                
         }
 
 

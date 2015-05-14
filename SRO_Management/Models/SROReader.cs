@@ -1,71 +1,54 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
+using FileHelpers;
 using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace SRO_Management.Models
 {
     public class SROReader : IEnumerable<IDataRecord>
     {
+        private List<SRORecord> histRecords;
 
-        private IEnumerable<SRORecord> SroRecords;
-
-        public SROReader(string dirPath, List<string> fileNames, FileTypes userFileType)
+        public SROReader(string dirPath, List<string> fileNames)
         {
-            ParseRecords(dirPath, fileNames, userFileType);
-            SroRecords = new List<SRORecord>();
+            histRecords = new List<SRORecord>();
+            ParseRecords(dirPath, fileNames);            
         }
 
-        private void ParseRecords(string dirPath, List<string> fileNames, FileTypes userFileType)
+        public void ParseRecords(string dirPath, List<string> fileNames)
         {
-            Regex sroRegex = new Regex(@"^(?<number>\d+),(?<source>\d:\d),(?<timestamp>\d{1,2} \w{2,4} \d{4} \d{1,2}:\d{2}:\d{2}),((?<pressure>\d+\.\d+)?|(?<pError>Err:\w+)?)?,(?<pPrecision>\s±\d+.\d+)?,((?<temp>\d+\.\d+)?|(?<tError>Err:\w+)?)?");
+            FileHelperEngine parser = new FileHelperEngine(typeof(SRORecord));
 
-            foreach (var fileName in fileNames)
+            parser.ErrorManager.ErrorMode = ErrorMode.SaveAndContinue;
+
+            foreach (var file in fileNames)
             {
-                try
+                var records = parser.ReadFile(System.IO.Path.Combine(dirPath, file)) as SRORecord[];
+
+                foreach (var record in records)
                 {
-                    using ( StreamReader inputStream = new StreamReader(dirPath + "\\" + fileName))
-                    {
-                        string line;
-                        while ((line = inputStream.ReadLine()) != null)
-                        {
-                            Match validRecord = sroRegex.Match(line);
-
-                            if (validRecord.Success)
-                            {
-                                SRORecord record = new SRORecord();
-                                record.Count = validRecord.Groups["number"].Value;
-                                record.Source = validRecord.Groups["source"].Value;
-                                record.TimeStamp = validRecord.Groups["timestamp"].Value;
-                                record.Pressure = validRecord.Groups["pressure"].Value;
-                            }
-                        }
-                    }                
-
+                    histRecords.Add(record);
                 }
-                catch (Exception sroEx)
-                {
-                    System.Diagnostics.Trace.WriteLine(DateTime.Now + sroEx.ToString(), "Error parsing SRO log file");
-                    throw;
-                }
+            }
 
+            if (parser.ErrorManager.HasErrors)
+            {
+                parser.ErrorManager.SaveErrors(System.IO.Path.Combine(dirPath,"errors.txt"));
             }
         }
 
 
         public IEnumerator<IDataRecord> GetEnumerator()
         {
-            return SroRecords.GetEnumerator();
+            return histRecords.GetEnumerator();
         }
+
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
         }
+
+
     }
 }
-

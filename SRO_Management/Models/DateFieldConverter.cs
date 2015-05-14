@@ -14,7 +14,7 @@ namespace SRO_Management.Models
         {
             DateTime convertedDate;
 
-            convertedDate = DateTime.ParseExact(from, "dd MMM yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+            convertedDate = DateTime.ParseExact(from, "d MMM yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
 
             return convertedDate;
         }
