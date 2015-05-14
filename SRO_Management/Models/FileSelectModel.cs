@@ -169,18 +169,9 @@ namespace SRO_Management.Models
             saveDialog.FileName = string.Format(@"{0}_{1}_{2}_{3:MM-yy_HHmm}.txt", selectedFileType.ToString(), serialInput, positionInput, DateTime.Now);
             saveDialog.InitialDirectory = DirPath;
 
-            try
+            if (saveDialog.ShowDialog() == true)
             {
-                if (saveDialog.ShowDialog() == true)
-                {
-                    FileSaveName = saveDialog.FileName;
-                }
-            }
-            catch (Exception saveLocEx)
-            {
-                System.Diagnostics.Trace.WriteLine(DateTime.Now + "," + saveLocEx.ToString(), ",File name or save location invalid");
-                FileSaveName = null;
-                throw;
+                FileSaveName = saveDialog.FileName;
             }
 
         }

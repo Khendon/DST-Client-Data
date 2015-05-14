@@ -1,9 +1,19 @@
-Client, 
-Well, 
-DST No., 
-Serial No., 1009
-Depth, 
-Position, Above
+Client,
+Well,
+DST No.,
+Serial No.,1
+Depth,
+Position,A
 
-Date Time, Pressure, Temperature
-DD/MM/YYYY HH:MM:SS, psia, degC
+Date Time,Pressure,Temperature
+DD/MM/YYYY HH:MM:SS,psia,degC
+14/04/2015 15:27:20,279.30,
+14/04/2015 15:27:21,279.40,
+14/04/2015 15:27:31,279.50,
+14/04/2015 15:27:32,279.60,
+14/04/2015 15:27:33,279.70,
+14/04/2015 15:27:35,279.90,
+14/04/2015 15:27:36,280.00,
+14/04/2015 15:27:37,280.10,
+14/04/2015 15:27:38,280.20,
+14/04/2015 15:27:39,280.30,

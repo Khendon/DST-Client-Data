@@ -15,6 +15,7 @@ namespace SRO_Management.ViewModels
 
         private Models.HeaderModel Header;
         private Models.FileSelectModel FileSelect;
+        private CancellationTokenSource cancelTokenSource; 
         
 
 
@@ -273,7 +274,7 @@ namespace SRO_Management.ViewModels
 
 
         #region Command properties
-        public DelegateCommand SelectFilesToExportCommand { get; private set; }
+        public DelegateCommand CancelCommand { get; private set; }
         public DelegateCommand ExportDataFilesCommand { get; private set; }
 
         private bool notBusy;
@@ -318,23 +319,25 @@ namespace SRO_Management.ViewModels
             // default selected linear time shift direction
             SelectedShift = ShiftDirection[0];
 
-            SelectFilesToExportCommand = new DelegateCommand(OnSelectFilesToExport, CanSelectFilesToExport);
+            CancelCommand = new DelegateCommand(OnCancel, CanCancel);
             ExportDataFilesCommand = new DelegateCommand(OnExportDataFiles, CanExportDataFiles);
         }
 
         #region File Select Command Implementation
-        private bool CanSelectFilesToExport()
+        private bool CanCancel()
         {
             return true;
         }
 
-        private void OnSelectFilesToExport()
+        private void OnCancel()
         {
-            //Call to method with a switch statement that opens the correct OpenFileDialog and returns the filename/filenames to the properties.
+            if (cancelTokenSource != null)
+            {
+                cancelTokenSource.Cancel();
+            }
+            
             ProgressValue = 0;
-            ProgressText = "Ready";
-            FileSelect.UserFileTypeSelection(SelectFileType);
-            ExportDataFilesCommand.RaiseCanExecuteChanged();
+            ProgressText = "Export Cancelled";            
         }
         #endregion
 
@@ -342,68 +345,68 @@ namespace SRO_Management.ViewModels
         #region Export command implementation
         private bool CanExportDataFiles()
         {
-            if ((Header.SerialInput != "" && Header.PositionInput != "") && (FileSelect.MultipleFiles != null || FileSelect.MemFile != null))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
+            return true;
         }
 
         private async void OnExportDataFiles()
         {
+            cancelTokenSource = new CancellationTokenSource();
+            var progress = new Progress<int>(i => ProgressValue = i);
+
+            FileSelect.UserFileTypeSelection(SelectFileType);
+
             NotBusy = false;
             ProgressText = "Exporting Client Data";
 
             FileSelect.SaveTargetDir(SelectFileType, SerialInput, PositionInput);
 
-            var progress = new Progress<int>(i => ProgressValue = i);
-
-            await clientDataAsync(progress);
+            await clientDataAsync(progress, cancelTokenSource.Token);
+      
 
             ExportDataFilesCommand.RaiseCanExecuteChanged();
             NotBusy = true;          
         }
 
 
-        private Task clientDataAsync(IProgress<int> progress)
+        private Task clientDataAsync(IProgress<int> progress, CancellationToken cancelToken)
         {
             return Task.Run(() =>
                 {
                     try
                     {
 
-                        IEnumerable<Models.IDataRecord> readInputFiles;                       
-                        
-                        readInputFiles = new Models.MemReader(SelectedDirectory, FileSelect.MemFile);
-                        
+                      
+                        IEnumerable<Models.IDataRecord> readInputFiles;
 
-                        foreach (var record in readInputFiles)
+                        if (SelectFileType == Models.FileTypes.Memory)
                         {
-                            System.Diagnostics.Debug.WriteLine(record.TimeStamp + ", " + record.Pressure + ", " + record.Temperature);
+                            readInputFiles = new Models.MemReader(SelectedDirectory, FileSelect.MemFile);
+                        }
+                        else
+                        {
+                            readInputFiles = new Models.SROReader(SelectedDirectory, FileSelect.MultipleFiles);
                         }
 
-                        //progress.Report(25);
-                        
-                        //Models.UnitConverter converter = new Models.UnitConverter();
-                        //IEnumerable<Models.IDataRecord> convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
 
-                        //progress.Report(50);
+                        progress.Report(25);
 
-                        //TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
-                        //Models.SortAndFilterData filter = new Models.SortAndFilterData();
-                        //IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
+                        Models.UnitConverter converter = new Models.UnitConverter();
+                        IEnumerable<Models.IDataRecord> convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
 
-                        //progress.Report(75);
+                        progress.Report(50);
 
-                        //Models.CsvWriter writer = new Models.CsvWriter();
-                        //writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);                 
+                        TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
+                        Models.SortAndFilterData filter = new Models.SortAndFilterData();
+                        IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
 
-                        //progress.Report(100);
-                        //ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
+                        progress.Report(75);
+
+                        Models.CsvWriter writer = new Models.CsvWriter();
+                        writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);
+
+                        progress.Report(100);
+                        ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
+
                     }
                     catch (FormatException formEx)
                     {

@@ -123,7 +123,6 @@
     <Compile Include="Models\CsvWriter.cs" />
     <Compile Include="Models\DateFieldConverter.cs" />
     <Compile Include="Models\SRORecord.cs" />
-    <Compile Include="Models\NullableTypeConverter.cs" />
     <Compile Include="Models\SelectionEnums.cs" />
     <Compile Include="Models\FileSelectModel.cs" />
     <Compile Include="Models\HeaderModel.cs" />

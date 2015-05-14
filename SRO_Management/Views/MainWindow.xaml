@@ -46,9 +46,7 @@
                 <TextBox Grid.Row="1" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding WellInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
                 <TextBox Grid.Row="2" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding DstInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" />
                 <TextBox Grid.Row="3" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding SerialInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
-                <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Content="*" ToolTip="Required Field" VerticalAlignment="Center" Foreground="#FF6A6868" />
                 <TextBox Grid.Row="4" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding PositionInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}" />
-                <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Content="*" ToolTip="Required Field" VerticalAlignment="Center" Foreground="#FF6A6868" />
                 <TextBox Grid.Row="5" Grid.Column="1" Margin="5,5,5,5" FontSize="12" FontWeight="Normal" VerticalContentAlignment="Center" Text="{Binding DepthInput, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=False}"/>
             </Grid>
         </GroupBox>
@@ -64,7 +62,7 @@
 
         <!--Button Stackpanel-->
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5,0,5,5">
-            <Button Width="80" Content="Select File(s)" Margin="0,0,8,0" Command="{Binding SelectFilesToExportCommand, Mode=OneWay}" />
+            <Button Width="80" Content="Cancel" Margin="0,0,8,0" Command="{Binding CancelCommand, Mode=OneWay}" />
             <Button Width="80" Content="Export" Command="{Binding ExportDataFilesCommand, Mode=OneWay}" Margin="0,0,3,0" IsEnabled="{Binding NotBusy}"/>
         </StackPanel>
 
