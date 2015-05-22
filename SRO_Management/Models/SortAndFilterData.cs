@@ -50,22 +50,17 @@ namespace SRO_Management.Models
         /// <returns>IEnumerable<IDataRecord></returns>
         private IEnumerable<IDataRecord> SortRecords(IEnumerable<IDataRecord> unsortedRecords)
         {
+            //var groupedRecords = (from record in unsortedRecords
+            //                      orderby record.TimeStamp
+            //                      select record).ToLookup(k => k.TimeStamp);
 
-            List<IDataRecord> dupesRemoved = unsortedRecords
-                .GroupBy(record => record.TimeStamp)
-                .Select(t => t.First())
-                .ToList();
 
-            var sortedRecords = from record in dupesRemoved
+            var sortedRecords = from record in unsortedRecords
                                 orderby record.TimeStamp
                                 select record;
 
-            var blanksRemoved = from record in sortedRecords
-                                where (record.TimeStamp != DateTime.MinValue)
-                                select record;
-                                 
 
-            return blanksRemoved;
+            return sortedRecords;
 
         }
 

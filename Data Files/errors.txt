@@ -1,4 +1,4 @@
-FileHelpers - Errors Saved at 14 May 2015 14:40:38
+FileHelpers - Errors Saved at 22 May 2015 14:29:09
 LineNumber | LineString |ErrorDescription
 7|3,0:0,14 Apr 2015 15:27:22,Err:Pressure, ±0.01,,,2,H!?|In the field 'Pressure': Line: 7. Column: 28. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 
 8|4,0:0,14 Apr 2015 15:27:23,Err:Pressure, ±0.01,,,3,H!?|In the field 'Pressure': Line: 8. Column: 28. Field: Pressure. Error Converting 'Err:Pressure' to type: 'Double'. 

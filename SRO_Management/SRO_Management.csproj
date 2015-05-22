@@ -117,6 +117,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\DataRecordComparer.cs" />
     <Compile Include="Models\MemReader.cs" />
     <Compile Include="Models\MemRecord.cs" />
     <Compile Include="Models\SROReader.cs" />

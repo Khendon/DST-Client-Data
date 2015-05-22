@@ -375,10 +375,12 @@ namespace SRO_Management.ViewModels
                     try
                     {
 
-                      
-                        IEnumerable<Models.IDataRecord> readInputFiles;
 
-                        if (SelectFileType == Models.FileTypes.Memory)
+                        IEnumerable<Models.IDataRecord> readInputFiles;
+                        //IEnumerable<Models.IDataRecord> convertedRecords;
+                        //IEnumerable<Models.IDataRecord> filteredRecords;
+
+                        if ((SelectFileType == Models.FileTypes.Memory))
                         {
                             readInputFiles = new Models.MemReader(SelectedDirectory, FileSelect.MemFile);
                         }
@@ -389,20 +391,75 @@ namespace SRO_Management.ViewModels
 
 
                         progress.Report(25);
+                                                                                                            
 
-                        Models.UnitConverter converter = new Models.UnitConverter();
-                        IEnumerable<Models.IDataRecord> convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
+                        var pressureOnly = from record in readInputFiles
+                                           where (record.Pressure.HasValue && !record.Temperature.HasValue)
+                                           select record;
 
-                        progress.Report(50);
+                        var temperatureOnly = from record in readInputFiles
+                                              where (!record.Pressure.HasValue && record.Temperature.HasValue)
+                                              select record;
 
-                        TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
-                        Models.SortAndFilterData filter = new Models.SortAndFilterData();
-                        IEnumerable<Models.IDataRecord> filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
 
-                        progress.Report(75);
 
-                        Models.CsvWriter writer = new Models.CsvWriter();
-                        writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);
+                        //foreach (var record in pressureOnly)
+                        //{
+                        //    System.Diagnostics.Debug.WriteLine(record.TimeStamp + " " + record.Pressure);
+                        //}
+
+                        //System.Diagnostics.Debug.WriteLine(" ");
+
+                        //foreach (var record in temperatureOnly)
+                        //{
+                        //    System.Diagnostics.Debug.WriteLine(record.TimeStamp + " " + record.Temperature);
+                        //}
+
+                        var mergedRecords = from tRecord in temperatureOnly
+                                            join pRecord in pressureOnly on tRecord.TimeStamp equals pRecord.TimeStamp                                            
+                                            select new Models.SRORecord { TimeStamp = pRecord.TimeStamp, Pressure = pRecord.Pressure, Temperature = tRecord.Temperature };
+
+                        var finalRecords = mergedRecords.Union(readInputFiles, new Models.DataRecordComparer());
+
+                        
+                        //System.Diagnostics.Debug.WriteLine(" ");
+
+                        foreach (var record in finalRecords)
+                        {
+                            System.Diagnostics.Debug.WriteLine(record.TimeStamp + " " + record.Pressure + " " + record.Temperature);
+                        }
+
+                                                                  
+                                            
+
+
+
+                       
+
+
+                        //if ((SelectedPresUnit != Models.PresUnitSelection.psia) || (SelectedTempUnit != Models.TempUnitSelection.degC))
+                        //{
+                        //    Models.UnitConverter converter = new Models.UnitConverter();
+                        //    convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
+ 
+                        //    progress.Report(50);
+
+                        //    TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
+                        //    Models.SortAndFilterData filter = new Models.SortAndFilterData();
+                        //    filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
+                        //}
+                        //else
+                        //{
+                        //    progress.Report(50);
+                        //    TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
+                        //    Models.SortAndFilterData filter = new Models.SortAndFilterData();
+                        //    filteredRecords = filter.ChooseFilters(readInputFiles, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
+                        //}                        
+
+                        //progress.Report(75);
+
+                        //Models.CsvWriter writer = new Models.CsvWriter();
+                        //writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);
 
                         progress.Report(100);
                         ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
@@ -410,7 +467,7 @@ namespace SRO_Management.ViewModels
                     }
                     catch (FormatException formEx)
                     {
-                        System.Windows.MessageBox.Show("Export Failed! Please select valid data file(s) (CW Duplex or later)");
+                        System.Windows.MessageBox.Show("Export Failed! Please select valid data file(s) (DST v3.1 or later)");
                         System.Diagnostics.Trace.WriteLine(DateTime.Now + formEx.ToString());
                         progress.Report(0);
                         ProgressText = "Ready";
