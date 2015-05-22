@@ -323,7 +323,7 @@ namespace SRO_Management.ViewModels
             ExportDataFilesCommand = new DelegateCommand(OnExportDataFiles, CanExportDataFiles);
         }
 
-        #region File Select Command Implementation
+        #region Cancel Command Implementation
         private bool CanCancel()
         {
             return true;
@@ -355,13 +355,15 @@ namespace SRO_Management.ViewModels
 
             FileSelect.UserFileTypeSelection(SelectFileType);
 
-            NotBusy = false;
-            ProgressText = "Exporting Client Data";
+            NotBusy = false;            
 
             FileSelect.SaveTargetDir(SelectFileType, SerialInput, PositionInput);
 
-            await clientDataAsync(progress, cancelTokenSource.Token);
-      
+            if ((SelectedDirectory != null) && (FileSelect.FileSaveName != null))
+            {
+                ProgressText = "Exporting Client Data";
+                await clientDataAsync(progress, cancelTokenSource.Token); 
+            }
 
             ExportDataFilesCommand.RaiseCanExecuteChanged();
             NotBusy = true;          
@@ -374,11 +376,9 @@ namespace SRO_Management.ViewModels
                 {
                     try
                     {
-
-
                         IEnumerable<Models.IDataRecord> readInputFiles;
-                        //IEnumerable<Models.IDataRecord> convertedRecords;
-                        //IEnumerable<Models.IDataRecord> filteredRecords;
+                        IEnumerable<Models.IDataRecord> convertedRecords;
+                        IEnumerable<Models.IDataRecord> filteredRecords;
 
                         if ((SelectFileType == Models.FileTypes.Memory))
                         {
@@ -389,77 +389,41 @@ namespace SRO_Management.ViewModels
                             readInputFiles = new Models.SROReader(SelectedDirectory, FileSelect.MultipleFiles);
                         }
 
-
-                        progress.Report(25);
-                                                                                                            
-
-                        var pressureOnly = from record in readInputFiles
-                                           where (record.Pressure.HasValue && !record.Temperature.HasValue)
-                                           select record;
-
-                        var temperatureOnly = from record in readInputFiles
-                                              where (!record.Pressure.HasValue && record.Temperature.HasValue)
-                                              select record;
-
-
-
-                        //foreach (var record in pressureOnly)
-                        //{
-                        //    System.Diagnostics.Debug.WriteLine(record.TimeStamp + " " + record.Pressure);
-                        //}
-
-                        //System.Diagnostics.Debug.WriteLine(" ");
-
-                        //foreach (var record in temperatureOnly)
-                        //{
-                        //    System.Diagnostics.Debug.WriteLine(record.TimeStamp + " " + record.Temperature);
-                        //}
-
-                        var mergedRecords = from tRecord in temperatureOnly
-                                            join pRecord in pressureOnly on tRecord.TimeStamp equals pRecord.TimeStamp                                            
-                                            select new Models.SRORecord { TimeStamp = pRecord.TimeStamp, Pressure = pRecord.Pressure, Temperature = tRecord.Temperature };
-
-                        var finalRecords = mergedRecords.Union(readInputFiles, new Models.DataRecordComparer());
-
-                        
-                        //System.Diagnostics.Debug.WriteLine(" ");
-
-                        foreach (var record in finalRecords)
+                        if (cancelToken.IsCancellationRequested)
                         {
-                            System.Diagnostics.Debug.WriteLine(record.TimeStamp + " " + record.Pressure + " " + record.Temperature);
+                            throw new TaskCanceledException();
                         }
 
-                                                                  
-                                            
+                        progress.Report(25);
 
+                        if ((SelectedPresUnit != Models.PresUnitSelection.psia) || (SelectedTempUnit != Models.TempUnitSelection.degC))
+                        {
+                            Models.UnitConverter converter = new Models.UnitConverter();
+                            convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
 
+                            progress.Report(50);
 
-                       
+                            TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
+                            Models.SortAndFilterData filter = new Models.SortAndFilterData();
+                            filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
+                        }
+                        else
+                        {
+                            progress.Report(50);
+                            TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
+                            Models.SortAndFilterData filter = new Models.SortAndFilterData();
+                            filteredRecords = filter.ChooseFilters(readInputFiles, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
+                        }
 
+                        progress.Report(75);
 
-                        //if ((SelectedPresUnit != Models.PresUnitSelection.psia) || (SelectedTempUnit != Models.TempUnitSelection.degC))
-                        //{
-                        //    Models.UnitConverter converter = new Models.UnitConverter();
-                        //    convertedRecords = converter.ConvertUnits(readInputFiles, SelectedPresUnit, SelectedTempUnit);
- 
-                        //    progress.Report(50);
+                        if (cancelToken.IsCancellationRequested)
+                        {
+                            throw new TaskCanceledException();
+                        }
 
-                        //    TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
-                        //    Models.SortAndFilterData filter = new Models.SortAndFilterData();
-                        //    filteredRecords = filter.ChooseFilters(convertedRecords, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
-                        //}
-                        //else
-                        //{
-                        //    progress.Report(50);
-                        //    TimeSpan linearShift = new TimeSpan(ShiftHours, ShiftMins, ShiftSecs);
-                        //    Models.SortAndFilterData filter = new Models.SortAndFilterData();
-                        //    filteredRecords = filter.ChooseFilters(readInputFiles, AllDataCb, FilterStartTime, FilterEndTime, SelectedShift, linearShift);
-                        //}                        
-
-                        //progress.Report(75);
-
-                        //Models.CsvWriter writer = new Models.CsvWriter();
-                        //writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);
+                        Models.CsvWriter writer = new Models.CsvWriter();
+                        writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);
 
                         progress.Report(100);
                         ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
@@ -483,6 +447,13 @@ namespace SRO_Management.ViewModels
                         FileSelect.MemFile = null;
                         FileSelect.MultipleFiles = null;
                     }
+                    catch (TaskCanceledException canEx)
+                    {
+                        System.Diagnostics.Trace.WriteLine(DateTime.Now + canEx.ToString());
+                        progress.Report(0);
+                        FileSelect.MemFile = null;
+                        FileSelect.MultipleFiles = null;
+                    }
                     catch(Exception genEx)
                     {
                         System.Windows.MessageBox.Show("Export Failed! Email: dave.pollock@exprogroup.com for further support");
@@ -493,9 +464,7 @@ namespace SRO_Management.ViewModels
                         FileSelect.MultipleFiles = null;
                     }
                     
-                });
-            
-            
+                });           
         }
         #endregion
 

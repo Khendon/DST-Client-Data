@@ -50,17 +50,25 @@ namespace SRO_Management.Models
         /// <returns>IEnumerable<IDataRecord></returns>
         private IEnumerable<IDataRecord> SortRecords(IEnumerable<IDataRecord> unsortedRecords)
         {
-            //var groupedRecords = (from record in unsortedRecords
-            //                      orderby record.TimeStamp
-            //                      select record).ToLookup(k => k.TimeStamp);
+            var pressureOnly = from record in unsortedRecords
+                               where (record.Pressure.HasValue && !record.Temperature.HasValue)
+                               select record;
 
+            var temperatureOnly = from record in unsortedRecords
+                                  where (!record.Pressure.HasValue && record.Temperature.HasValue)
+                                  select record;
 
-            var sortedRecords = from record in unsortedRecords
+            var mergedRecords = from tRecord in temperatureOnly
+                                join pRecord in pressureOnly on tRecord.TimeStamp equals pRecord.TimeStamp
+                                select new Models.SRORecord { TimeStamp = pRecord.TimeStamp, Pressure = pRecord.Pressure, Temperature = tRecord.Temperature };
+
+            var finalRecords = mergedRecords.Union(unsortedRecords, new Models.DataRecordComparer());
+
+            var sortedRecords = from record in finalRecords
                                 orderby record.TimeStamp
                                 select record;
 
-
-            return sortedRecords;
+            return sortedRecords;           
 
         }
 

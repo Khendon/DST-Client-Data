@@ -26,7 +26,8 @@ namespace SRO_Management.Models
 
             if (parser.ErrorManager.HasErrors)
             {
-                parser.ErrorManager.SaveErrors(System.IO.Path.Combine(dirPath, "errors.txt"));
+                string file = string.Format("Mem_ErrorLog_{0:MM-yy_HHmm}.txt", DateTime.Now);
+                parser.ErrorManager.SaveErrors(System.IO.Path.Combine(dirPath, file));
             }
         }
 
