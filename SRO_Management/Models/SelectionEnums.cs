@@ -8,7 +8,7 @@ using System.ComponentModel;
 namespace SRO_Management.Models
 {
     /// <summary>
-    /// Enumerators to populate and utilise comboboxes and radio buttons on view.
+    /// Enumerators to populate and utilise combo box and radio buttons on view.
     /// Created in namespace to allow selections to be used by other classes.
     /// </summary>
 
@@ -35,6 +35,4 @@ namespace SRO_Management.Models
         [Description("Memory")]
         Memory
     };
-
-    
 }

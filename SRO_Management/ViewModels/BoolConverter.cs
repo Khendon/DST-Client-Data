@@ -14,8 +14,8 @@ namespace SRO_Management.ViewModels
             bool v = (bool)value;
             return !v;
         }
-        public object ConvertBack(object value, Type targetType,
-        object parameter, System.Globalization.CultureInfo culture)
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new System.NotSupportedException();
         }

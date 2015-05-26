@@ -36,7 +36,6 @@ namespace SRO_Management.Models
             return memRecords.GetEnumerator();
         }
 
-
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();

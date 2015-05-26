@@ -14,7 +14,6 @@ namespace SRO_Management.Models
     /// </summary>
     public class UnitConverter
     {
-
         private double PressureConvert (double psiPres, PresUnitSelection targetUnit)
         {
             Pressure initialValue = Pressure.FromPsi(psiPres);
@@ -40,11 +39,9 @@ namespace SRO_Management.Models
                 
                 default:
                     System.Diagnostics.Trace.Assert(false, "User selected unit conversion not implemented");
-                    throw new NotImplementedException("User selected unit conversion not implemented");
-                 
+                    throw new NotImplementedException("User selected unit conversion not implemented");                 
             }
         }
-
 
         private double TempConvert (double degcTemp, TempUnitSelection targetUnit)
         {
@@ -72,9 +69,7 @@ namespace SRO_Management.Models
                 default:
                     System.Diagnostics.Trace.Assert(false, "User selected unit converted not implemented.");
                     throw new NotImplementedException("User selected unit conversion not implemented.");
-
             }
-
         }
 
         /// <summary>
@@ -99,11 +94,8 @@ namespace SRO_Management.Models
                     double temp = Convert.ToDouble(record.Temperature);
                     record.Temperature = TempConvert(temp, tempUnit);
                 }
-            }
 
             return rawRecords;                
         }
-
-
     }
 }

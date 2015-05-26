@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace SRO_Management.Models
 {
     public class SortAndFilterData
-    {
-        
+    {        
         public IEnumerable<IDataRecord> ChooseFilters(IEnumerable<IDataRecord> unfilteredRecords, bool allDataCheck, DateTime? filterStart, DateTime? filterEnd, string shiftDirection, TimeSpan linearShift)
         {
             IEnumerable<IDataRecord> sortedRecords = SortRecords(unfilteredRecords);
@@ -42,9 +41,9 @@ namespace SRO_Management.Models
             return filteredRecords;
         }
 
-
         /// <summary>
-        /// Groups IEnum data records to remove duplicate timestamps, sorts in date/time order and returns IEnum.
+        /// Merges records that contain on pressure or only temperature, giving priority to merged values over mixed P&T due to higher resolution on data
+        /// orders the resulting collection by timestamp and returns.
         /// </summary>
         /// <param name="unsortedRecords"></param>
         /// <returns>IEnumerable<IDataRecord></returns>
@@ -68,8 +67,7 @@ namespace SRO_Management.Models
                                 orderby record.TimeStamp
                                 select record;
 
-            return sortedRecords;           
-
+            return sortedRecords;
         }
 
         private IEnumerable<IDataRecord> shiftTimeStamp(IEnumerable<IDataRecord> unShiftedRecords, string selectedShift, TimeSpan linearShift)
@@ -92,7 +90,6 @@ namespace SRO_Management.Models
 
                 return unShiftedRecords;
             }
-        }
-        
+        }        
     }
 }

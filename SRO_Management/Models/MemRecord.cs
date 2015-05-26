@@ -1,7 +1,6 @@
 ﻿using System;
 using FileHelpers;
 
-
 namespace SRO_Management.Models
 {
     [DelimitedRecord(",")]
@@ -22,7 +21,6 @@ namespace SRO_Management.Models
         public double? Temperature;
 
         public string status;
-
 
         // IDataRecord interface implementation
         DateTime IDataRecord.TimeStamp

@@ -9,12 +9,13 @@ namespace SRO_Management.Models
 {
     /// <summary>
     /// Used by viewmodel for selection of files to read depending on certain conditions on view.
-    /// Opens OpenFileDialog with multiselect on/off depending on user requirements.
+    /// Opens OpenFileDialog with multiple file select on/off depending on user requirements.
     /// Directory path property also used for output file.
     /// </summary>
     public class FileSelectModel
     {
         private List<string> multipleFiles;
+
         public List<string> MultipleFiles
         {
             get { return multipleFiles; }
@@ -22,6 +23,7 @@ namespace SRO_Management.Models
         }
 
         private string dirPath;
+
         public string DirPath
         {
             get { return dirPath; }
@@ -29,6 +31,7 @@ namespace SRO_Management.Models
         }
 
         private string memFile;
+
         public string MemFile
         {
             get { return memFile; }
@@ -50,15 +53,11 @@ namespace SRO_Management.Models
             get { return fileSaveName; }
             set { fileSaveName = value; }
         }
-        
-        
-
 
         public FileSelectModel()
         {
             DefaultDirPath();
         }
-
 
         public void UserFileTypeSelection(FileTypes userSelectedFileType)
         {
@@ -74,9 +73,7 @@ namespace SRO_Management.Models
                     System.Diagnostics.Trace.Assert(false, "User selected file type not implemented");
                     throw new NotImplementedException("User selected file type not implemented");                   
             }
-
         }
-
 
         private void DefaultDirPath()
         {
@@ -120,9 +117,7 @@ namespace SRO_Management.Models
                 MemFile = null;
                 throw;
             }
-
         }
-
 
         private void MultiFileSelection()
         {
@@ -158,8 +153,6 @@ namespace SRO_Management.Models
                 MultipleFiles = null;
                 throw;
             }
-
-
         }
 
         public void SaveTargetDir(FileTypes selectedFileType, string serialInput, string positionInput)
@@ -173,8 +166,6 @@ namespace SRO_Management.Models
             {
                 FileSaveName = saveDialog.FileName;
             }
-
         }
-
     }
 }

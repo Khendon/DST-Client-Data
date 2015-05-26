@@ -138,6 +138,7 @@ namespace SRO_Management.ViewModels
         
 
         private Models.FileTypes selectFileType;
+
         public Models.FileTypes SelectFileType
         {
             get { return selectFileType; }
@@ -163,6 +164,7 @@ namespace SRO_Management.ViewModels
         
         // Bound to pressure unit combobox
         private Models.PresUnitSelection selectedPresUnit;
+
         public Models.PresUnitSelection SelectedPresUnit
         {
             get { return selectedPresUnit; }
@@ -187,6 +189,7 @@ namespace SRO_Management.ViewModels
 
         // Bound to temp unit combobox
         private Models.TempUnitSelection selectedTempUnit;
+
         public Models.TempUnitSelection SelectedTempUnit
         {
             get { return selectedTempUnit; }
@@ -227,6 +230,7 @@ namespace SRO_Management.ViewModels
         }
 
         private int shiftHours;
+
         public int ShiftHours
         {
             get { return shiftHours; }
@@ -234,6 +238,7 @@ namespace SRO_Management.ViewModels
         }
 
         private int shiftMins;
+
         public int ShiftMins
         {
             get { return shiftMins; }
@@ -241,6 +246,7 @@ namespace SRO_Management.ViewModels
         }
 
         private int shiftSecs;
+
         public int ShiftSecs
         {
             get { return shiftSecs; }
@@ -248,6 +254,7 @@ namespace SRO_Management.ViewModels
         }
 
         private string[] shiftDirection = {"+", "-"};
+
         public string[] ShiftDirection
         {
             get { return shiftDirection; }
@@ -255,6 +262,7 @@ namespace SRO_Management.ViewModels
         }
 
         private string selectedShift;
+
         public string SelectedShift
         {
             get { return selectedShift; }
@@ -275,9 +283,11 @@ namespace SRO_Management.ViewModels
 
         #region Command properties
         public DelegateCommand CancelCommand { get; private set; }
+
         public DelegateCommand ExportDataFilesCommand { get; private set; }
 
         private bool notBusy;
+
         public bool NotBusy
         {
             get { return notBusy; }
@@ -285,6 +295,7 @@ namespace SRO_Management.ViewModels
         }
 
         private string progressText;
+
         public string ProgressText
         {
             get { return progressText; }
@@ -292,6 +303,7 @@ namespace SRO_Management.ViewModels
         }
 
         private int progressValue;
+
         public int ProgressValue
         {
             get { return progressValue; }
@@ -304,22 +316,30 @@ namespace SRO_Management.ViewModels
         {   
             //Instantiate client file header model object
             Header = new Models.HeaderModel();
+
             // Instantiate file selection and dir path model
             FileSelect = new Models.FileSelectModel();
+
             //Default Pressure Units Combobox
             SelectedPresUnit = Models.PresUnitSelection.psia;
+
             //Default Temp Units Combobox
             SelectedTempUnit = Models.TempUnitSelection.degC;
+
             //All Data checkbox default value
             AllDataCb = true;
+
             //NotBusy set to true, export button enabled.
             NotBusy = true;
+
             // Progress bar text info
             ProgressText = "Ready";
+
             // default selected linear time shift direction
             SelectedShift = ShiftDirection[0];
 
             CancelCommand = new DelegateCommand(OnCancel, CanCancel);
+
             ExportDataFilesCommand = new DelegateCommand(OnExportDataFiles, CanExportDataFiles);
         }
 
@@ -427,8 +447,8 @@ namespace SRO_Management.ViewModels
 
                         progress.Report(100);
                         ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
-
                     }
+
                     catch (FormatException formEx)
                     {
                         System.Windows.MessageBox.Show("Export Failed! Please select valid data file(s) (DST v3.1 or later)");
@@ -438,6 +458,7 @@ namespace SRO_Management.ViewModels
                         FileSelect.MemFile = null;
                         FileSelect.MultipleFiles = null;
                     }
+
                     catch(UnauthorizedAccessException accEx)
                     {
                         System.Windows.MessageBox.Show("Export Failed! Please choose a valid filename and save location");
@@ -447,6 +468,7 @@ namespace SRO_Management.ViewModels
                         FileSelect.MemFile = null;
                         FileSelect.MultipleFiles = null;
                     }
+
                     catch (TaskCanceledException canEx)
                     {
                         System.Diagnostics.Trace.WriteLine(DateTime.Now + canEx.ToString());
@@ -454,6 +476,7 @@ namespace SRO_Management.ViewModels
                         FileSelect.MemFile = null;
                         FileSelect.MultipleFiles = null;
                     }
+
                     catch(Exception genEx)
                     {
                         System.Windows.MessageBox.Show("Export Failed! Email: dave.pollock@exprogroup.com for further support");
@@ -462,18 +485,9 @@ namespace SRO_Management.ViewModels
                         ProgressText = "Ready";
                         FileSelect.MemFile = null;
                         FileSelect.MultipleFiles = null;
-                    }
-                    
+                    }                    
                 });           
         }
         #endregion
-
-
-
-
-
-
-
     }
 }
-

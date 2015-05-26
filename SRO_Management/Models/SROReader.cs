@@ -38,7 +38,6 @@ namespace SRO_Management.Models
             }
         }
 
-
         public IEnumerator<IDataRecord> GetEnumerator()
         {
             return histRecords.GetEnumerator();
@@ -49,7 +48,5 @@ namespace SRO_Management.Models
         {
             return this.GetEnumerator();
         }
-
-
     }
 }

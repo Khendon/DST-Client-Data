@@ -8,7 +8,6 @@ namespace SRO_Management.Models
 {
     public class DataRecordComparer : IEqualityComparer<IDataRecord>
     {
-
         public bool Equals(IDataRecord x, IDataRecord y)
         {
             return x.TimeStamp == y.TimeStamp;
@@ -24,6 +23,5 @@ namespace SRO_Management.Models
 
             return obj.TimeStamp.GetHashCode();
         }
-
     }
 }

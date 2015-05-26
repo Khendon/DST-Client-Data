@@ -12,7 +12,6 @@ namespace SRO_Management.Models
     /// </summary>
     public class CsvWriter
     {
-
         public void CreateFileWriterStreams(string fileName, IEnumerable<IDataRecord> clientRecords, HeaderModel headerData)
         {          
             using (TextWriter clientDataFile = new StreamWriter(fileName))
@@ -35,9 +34,6 @@ namespace SRO_Management.Models
                     }                    
                 }
             }
-
-        }
-
-       
+        }       
     }
 }

@@ -27,7 +27,6 @@ namespace SRO_Management.Models
         private string depthInput = string.Empty;
         private string positionInput = string.Empty;
 
-
         //Public properties - header labels
         public string ClientLabel 
         { 
@@ -58,6 +57,7 @@ namespace SRO_Management.Models
             get { return depthLabel; }
             set { depthLabel = value; } 
         }
+
         public string PositionLabel 
         {
             get { return positionLabel; }
@@ -101,9 +101,9 @@ namespace SRO_Management.Models
             set { positionInput = value; }
         }
 
-
         //Column header labels
         private string dateTimeLabel = "Date Time";
+
         public string DateTimeLabel
         {
             get { return dateTimeLabel; }
@@ -111,6 +111,7 @@ namespace SRO_Management.Models
         }
 
         private string pressureLabel = "Pressure";
+
         public string PressureLabel
         {
             get { return pressureLabel; }
@@ -118,12 +119,12 @@ namespace SRO_Management.Models
         }
 
         private string tempLabel = "Temperature";
+
         public string TempLabel
         {
             get { return tempLabel; }
             set { tempLabel = value; }
         }
-
 
         // Column unit header data
         private string dateStringFormat = "DD/MM/YYYY HH:MM:SS";
@@ -149,9 +150,5 @@ namespace SRO_Management.Models
             get { return tempStringFormat; }
             set { tempStringFormat = value; }
         }
-        
-        
-        
-
     }
 }
