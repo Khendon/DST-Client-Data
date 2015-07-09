@@ -6,21 +6,34 @@ using System.Threading.Tasks;
 
 namespace SRO_Management.Models
 {
+    /// <summary>
+    /// Class to filter, sort and shift input data as selected by the user.
+    /// </summary>
     public class SortAndFilterData
-    {        
+    {
+        /// <summary>
+        /// Chooses the filters to be applied to the input data based on options/filters selected in view model.
+        /// </summary>
+        /// <param name="unfilteredRecords">The unfiltered records.</param>
+        /// <param name="allDataCheck">if set to <c>true</c> [all data check].</param>
+        /// <param name="filterStart">The filter start.</param>
+        /// <param name="filterEnd">The filter end.</param>
+        /// <param name="shiftDirection">The shift direction.</param>
+        /// <param name="linearShift">The time value of the linear shift.</param>
+        /// <returns>IEnumerable<IDataRecord></returns>
         public IEnumerable<IDataRecord> ChooseFilters(IEnumerable<IDataRecord> unfilteredRecords, bool allDataCheck, DateTime? filterStart, DateTime? filterEnd, string shiftDirection, TimeSpan linearShift)
         {
-            IEnumerable<IDataRecord> sortedRecords = SortRecords(unfilteredRecords);
+            IEnumerable<IDataRecord> sortedRecords = this.SortRecords(unfilteredRecords);
 
-            if(allDataCheck)
+            if (allDataCheck)
             {
-                var shiftedRecords = shiftTimeStamp(sortedRecords, shiftDirection, linearShift);
+                var shiftedRecords = this.ShiftTimeStamp(sortedRecords, shiftDirection, linearShift);
                 return shiftedRecords;
             }
             else
             {
-                var shiftedRecords = shiftTimeStamp(sortedRecords, shiftDirection, linearShift);
-                var filteredRecords = TimeFilterRecords(shiftedRecords, filterStart, filterEnd);
+                var shiftedRecords = this.ShiftTimeStamp(sortedRecords, shiftDirection, linearShift);
+                var filteredRecords = this.TimeFilterRecords(shiftedRecords, filterStart, filterEnd);
                 return filteredRecords;
             }
         }
@@ -70,7 +83,14 @@ namespace SRO_Management.Models
             return sortedRecords;
         }
 
-        private IEnumerable<IDataRecord> shiftTimeStamp(IEnumerable<IDataRecord> unShiftedRecords, string selectedShift, TimeSpan linearShift)
+        /// <summary>
+        /// Shifts the time stamp by the amount the user selects in main viewmodel.
+        /// </summary>
+        /// <param name="unShiftedRecords">The un shifted records.</param>
+        /// <param name="selectedShift">The selected shift.</param>
+        /// <param name="linearShift">The linear shift.</param>
+        /// <returns>IEnumerable<IDataRecord></returns>
+        private IEnumerable<IDataRecord> ShiftTimeStamp(IEnumerable<IDataRecord> unShiftedRecords, string selectedShift, TimeSpan linearShift)
         {
             if (selectedShift == "+")
             {

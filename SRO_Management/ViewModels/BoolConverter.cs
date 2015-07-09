@@ -7,6 +7,9 @@ using System.Windows.Data;
 
 namespace SRO_Management.ViewModels
 {
+    /// <summary>
+    /// Boolean converter for use with radio buttons.
+    /// </summary>
     public class BoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

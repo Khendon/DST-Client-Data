@@ -1,17 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using FileHelpers;
 
 namespace SRO_Management.Models
 {
+    /// <summary>
+    /// Reader class for parsing Memory gauge files.
+    /// </summary>
     public class MemReader : IEnumerable<IDataRecord>
     {
         private IEnumerable<MemRecord> memRecords;
 
         public MemReader(string dirPath, string fileName)
         {
-            ParseRecords(dirPath, fileName);
+            this.ParseRecords(dirPath, fileName);
         }
 
         public void ParseRecords(string dirPath, string fileName)
@@ -22,7 +25,7 @@ namespace SRO_Management.Models
 
             var records = parser.ReadFile(System.IO.Path.Combine(dirPath, fileName)) as MemRecord[];
 
-            memRecords = records;
+            this.memRecords = records;
 
             if (parser.ErrorManager.HasErrors)
             {
@@ -33,7 +36,7 @@ namespace SRO_Management.Models
 
         public IEnumerator<IDataRecord> GetEnumerator()
         {
-            return memRecords.GetEnumerator();
+            return this.memRecords.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

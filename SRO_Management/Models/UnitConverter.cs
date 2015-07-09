@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
 using UnitsNet;
 
 namespace SRO_Management.Models
@@ -14,12 +14,46 @@ namespace SRO_Management.Models
     /// </summary>
     public class UnitConverter
     {
-        private double PressureConvert (double psiPres, PresUnitSelection targetUnit)
+        /// <summary>
+        /// Accepts IEnum of raw data records from selected Csv files and converts them base on user selection on view
+        /// </summary>
+        /// <param name="rawRecords"></param>
+        /// <param name="pressureUnit"></param>
+        /// <param name="tempUnit"></param>
+        /// <returns>IEnumerable<IDataRecord></returns>
+        public IEnumerable<IDataRecord> ConvertUnits(IEnumerable<IDataRecord> rawRecords, PresUnitSelection pressureUnit, TempUnitSelection tempUnit)
+        {
+            foreach (var record in rawRecords)
+            {
+                if (record.Pressure != null)
+                {
+                    double pressure = Convert.ToDouble(record.Pressure);
+                    record.Pressure = this.PressureConvert(pressure, pressureUnit);
+                }
+
+                if (record.Temperature != null)
+                {
+                    double temp = Convert.ToDouble(record.Temperature);
+                    record.Temperature = this.TempConvert(temp, tempUnit);
+                }
+            }
+
+            return rawRecords;
+        }
+
+        /// <summary>
+        /// Converts pressure values from psia in the input file to user selected unit.
+        /// </summary>
+        /// <param name="psiPres">Pressure value in psia</param>
+        /// <param name="targetUnit">User selected unit.</param>
+        /// <returns>double</returns>
+        /// <exception cref="NotImplementedException">User selected unit conversion not implemented</exception>
+        private double PressureConvert(double psiPres, PresUnitSelection targetUnit)
         {
             Pressure initialValue = Pressure.FromPsi(psiPres);
             double convertedValue;
 
-            switch(targetUnit)
+            switch (targetUnit)
             {
                 case PresUnitSelection.kPa:
                     convertedValue = initialValue.Kilopascals;
@@ -36,19 +70,26 @@ namespace SRO_Management.Models
                 case PresUnitSelection.psia:
                     convertedValue = psiPres;
                     return convertedValue;
-                
+
                 default:
                     System.Diagnostics.Trace.Assert(false, "User selected unit conversion not implemented");
-                    throw new NotImplementedException("User selected unit conversion not implemented");                 
+                    throw new NotImplementedException("User selected unit conversion not implemented");
             }
         }
 
-        private double TempConvert (double degcTemp, TempUnitSelection targetUnit)
+        /// <summary>
+        /// Converts temperature values from degC in the input file to user selected unit.
+        /// </summary>
+        /// <param name="degcTemp">Temperature value in degC</param>
+        /// <param name="targetUnit">User selected unit</param>
+        /// <returns>double</returns>
+        /// <exception cref="NotImplementedException">User selected unit conversion not implemented.</exception>
+        private double TempConvert(double degcTemp, TempUnitSelection targetUnit)
         {
             Temperature initialValue = Temperature.FromDegreesCelsius(degcTemp);
             double convertedValue;
 
-            switch(targetUnit)
+            switch (targetUnit)
             {
                 case TempUnitSelection.degF:
                     convertedValue = initialValue.DegreesFahrenheit;
@@ -70,32 +111,6 @@ namespace SRO_Management.Models
                     System.Diagnostics.Trace.Assert(false, "User selected unit converted not implemented.");
                     throw new NotImplementedException("User selected unit conversion not implemented.");
             }
-        }
-
-        /// <summary>
-        /// Accepts IEnum of raw data records from selected Csv files and converts them base on user selection on view
-        /// </summary>
-        /// <param name="rawRecords"></param>
-        /// <param name="pressureUnit"></param>
-        /// <param name="tempUnit"></param>
-        /// <returns>IEnumerable<IDataRecord></returns>
-        public IEnumerable<IDataRecord> ConvertUnits(IEnumerable<IDataRecord> rawRecords, PresUnitSelection pressureUnit, TempUnitSelection tempUnit)
-        {
-            foreach (var record in rawRecords)
-            {
-                if (record.Pressure != null)
-                {
-                    double pressure = Convert.ToDouble(record.Pressure);
-                    record.Pressure = PressureConvert(pressure, pressureUnit);
-                }
-
-                if (record.Temperature != null)
-                {
-                    double temp = Convert.ToDouble(record.Temperature);
-                    record.Temperature = TempConvert(temp, tempUnit);
-                }
-
-            return rawRecords;                
-        }
+        }       
     }
 }

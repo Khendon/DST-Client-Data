@@ -7,9 +7,12 @@ using FileHelpers;
 
 namespace SRO_Management.Models
 {
+
+    /// <summary>
+    /// Converts timestamp from file format to local machine format.
+    /// </summary>
     public class DateFieldConverter : ConverterBase
     {
-
         public override object StringToField(string from)
         {
             DateTime convertedDate;

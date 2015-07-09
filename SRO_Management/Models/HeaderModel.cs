@@ -11,144 +11,66 @@ namespace SRO_Management.Models
     /// </summary>
     public class HeaderModel
     {
-        // Private members - header labels
-        private string clientLabel = "Client";
-        private string wellLabel = "Well";
-        private string dstLabel = "DST No.";
-        private string serialLabel = "Serial No.";
-        private string depthLabel = "Depth";
-        private string positionLabel = "Position";
-
-        // Private members - header user input values
-        private string clientInput = string.Empty;
-        private string wellInput = string.Empty;
-        private string dstInput = string.Empty;
-        private string serialInput = string.Empty;
-        private string depthInput = string.Empty;
-        private string positionInput = string.Empty;
-
-        //Public properties - header labels
-        public string ClientLabel 
-        { 
-            get { return clientLabel; } 
-            set { clientLabel = value;} 
-        }
-
-        public string WellLabel 
+        public HeaderModel()
         {
-            get { return wellLabel; }
-            set { wellLabel = value; } 
+            this.ClientLabel = "Client";
+
+            this.WellLabel = "Well";
+
+            this.DstLabel = "DST No.";
+
+            this.SerialLabel = "Serial No.";
+
+            this.DepthLabel = "Depth";
+
+            this.PositionLabel = "Position";
+
+            this.DateTimeLabel = "Date Time";
+
+            this.PressureLabel = "Pressure";
+
+            this.TempLabel = "Temperature";
+
+            this.DateStringFormat = "DD/MM/YYYY HH:MM:SS";
         }
 
-        public string DstLabel 
-        {
-            get { return dstLabel; }
-            set { dstLabel = value; } 
-        }
+        // Public properties - header labels
+        public string ClientLabel { get; set; }
 
-        public string SerialLabel 
-        {
-            get { return serialLabel; }
-            set { serialLabel = value; } 
-        }
+        public string WellLabel { get; set; }
 
-        public string DepthLabel 
-        {
-            get { return depthLabel; }
-            set { depthLabel = value; } 
-        }
+        public string DstLabel { get; set; }
 
-        public string PositionLabel 
-        {
-            get { return positionLabel; }
-            set { positionLabel = value; } 
-        }
+        public string SerialLabel { get; set; }
 
-        // Public accessors - header user input values
-        public string ClientInput
-        {
-            get { return clientInput; }
-            set { clientInput = value; }
-        }
+        public string DepthLabel { get; set; }
 
-        public string WellInput
-        {
-            get { return wellInput; }
-            set { wellInput = value; }
-        }
+        public string PositionLabel { get; set; }
+        
+        // Public properties - header user input values
+        public string ClientInput { get; set; }
 
-        public string DstInput
-        {
-            get { return dstInput; }
-            set { dstInput = value; }
-        }
+        public string WellInput { get; set; }
 
-        public string SerialInput
-        {
-            get { return serialInput; }
-            set { serialInput = value; }
-        }
+        public string DstInput { get; set; }
 
-        public string DepthInput
-        {
-            get { return depthInput; }
-            set { depthInput = value; }
-        }
+        public string SerialInput { get; set; }
 
-        public string PositionInput
-        {
-            get { return positionInput; }
-            set { positionInput = value; }
-        }
+        public string DepthInput { get; set; }
 
-        //Column header labels
-        private string dateTimeLabel = "Date Time";
+        public string PositionInput { get; set; }
+        
+        // Column header labels
+        public string DateTimeLabel { get; set; }
 
-        public string DateTimeLabel
-        {
-            get { return dateTimeLabel; }
-            set { dateTimeLabel = value; }
-        }
+        public string PressureLabel { get; set; }
 
-        private string pressureLabel = "Pressure";
+        public string TempLabel { get; set; }
 
-        public string PressureLabel
-        {
-            get { return pressureLabel; }
-            set { pressureLabel = value; }
-        }
+        public string DateStringFormat { get; set; }
 
-        private string tempLabel = "Temperature";
+        public string PresStringFormat { get; set; }
 
-        public string TempLabel
-        {
-            get { return tempLabel; }
-            set { tempLabel = value; }
-        }
-
-        // Column unit header data
-        private string dateStringFormat = "DD/MM/YYYY HH:MM:SS";
-
-        public string DateStringFormat
-        {
-            get { return dateStringFormat; }
-            set { dateStringFormat = value; }
-        }
-
-        private string presStringFormat;
-
-        public string PresStringFormat
-        {
-            get { return presStringFormat; }
-            set { presStringFormat = value; }
-        }
-
-        private string tempStringFormat;
-
-        public string TempStringFormat
-        {
-            get { return tempStringFormat; }
-            set { tempStringFormat = value; }
-        }
-    }
+        public string TempStringFormat { get; set; }        
+    }    
 }

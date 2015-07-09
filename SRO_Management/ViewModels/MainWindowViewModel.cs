@@ -2,153 +2,347 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.Mvvm;
-using System.Threading;
-
+using System.Diagnostics;
 
 namespace SRO_Management.ViewModels
 {
+    /// <summary>
+    /// View model for application main window. 
+    /// Inherits from BinadableBase purely for INotifyPropertyChanged implementation.
+    /// </summary>
     public class MainWindowViewModel : BindableBase
     {
+        #region privates Fields
+        private Models.HeaderModel header;
 
-        private Models.HeaderModel Header;
-        private Models.FileSelectModel FileSelect;
-        private CancellationTokenSource cancelTokenSource; 
-        
+        private Models.FileSelectModel fileSelect;
 
+        private CancellationTokenSource cancelTokenSource;
 
-        #region File Header Labels
+        private Models.TempUnitSelection selectedTempUnit;
+
+        private bool allDataCb;
+
+        private Models.FileTypes selectFileType;
+
+        private DateTime? filterStartTime = null;
+
+        private Models.PresUnitSelection selectedPresUnit;
+
+        private DateTime? filterEndTime = null;
+
+        private int shiftHours;
+
+        private int shiftMins;
+
+        private int shiftSecs;
+
+        private string[] shiftDirection = { "+", "-" };
+
+        private string selectedShift;
+
+        private bool notBusy;
+
+        private string progressText;
+
+        private int progressValue;
+
+        // Error Traces
+        private TextWriterTraceListener traceListener;
+        private System.IO.FileStream traceLogFile;
+        #endregion
+
+        public MainWindowViewModel()
+        {
+            // Instantiate client file header model object
+            this.header = new Models.HeaderModel();
+
+            // Instantiate file selection and dir path model
+            this.fileSelect = new Models.FileSelectModel();
+
+            // Default Pressure Units Combobox
+            this.SelectedPresUnit = Models.PresUnitSelection.psia;
+
+            // Default Temp Units Combobox
+            this.SelectedTempUnit = Models.TempUnitSelection.degC;
+
+            // All Data checkbox default value
+            this.AllDataCb = true;
+
+            // NotBusy set to true, export button enabled.
+            this.NotBusy = true;
+
+            // Progress bar text info
+            this.ProgressText = "Ready";
+
+            // Default selected linear time shift direction
+            this.SelectedShift = this.ShiftDirection[0];
+
+            this.CancelCommand = new DelegateCommand(this.OnCancel, this.CanCancel);
+
+            this.ExportDataFilesCommand = new DelegateCommand(this.OnExportDataFiles, this.CanExportDataFiles);
+
+            var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var directoryCreate = System.IO.Directory.CreateDirectory(appDataFolder + "/Expro/DST Client Data");
+
+            var logFilePath = System.IO.Path.Combine(appDataFolder, "Expro/DST Client Data/DST_Exporter_ErrorLog.txt");
+            this.traceLogFile = new System.IO.FileStream(logFilePath, System.IO.FileMode.Append);
+            this.traceListener = new TextWriterTraceListener(this.traceLogFile);
+
+            Trace.Listeners.Add(this.traceListener);
+        }
+
+        #region File Header Labels (Properties)
         public string ClientLabel
         {
-            get { return Header.ClientLabel; }
-            set { Header.ClientLabel = value; OnPropertyChanged("ClientLabel"); }
+            get 
+            { 
+                return this.header.ClientLabel; 
+            }
+
+            set 
+            {
+                this.header.ClientLabel = value; 
+                this.OnPropertyChanged("ClientLabel"); 
+            }
         }
 
         public string WellLabel
         {
-            get { return Header.WellLabel; }
-            set { Header.WellLabel = value; OnPropertyChanged("WellLabel"); }
+            get 
+            { 
+                return this.header.WellLabel; 
+            }
+
+            set 
+            {
+                this.header.WellLabel = value;
+                this.OnPropertyChanged("WellLabel"); 
+            }
         }
 
         public string DstLabel
         {
-            get { return Header.DstLabel; }
-            set { Header.DstLabel = value; OnPropertyChanged("DstLabel"); }
+            get 
+            { 
+                return this.header.DstLabel; 
+            }
+
+            set 
+            {
+                this.header.DstLabel = value; 
+                this.OnPropertyChanged("DstLabel"); 
+            }
         }
 
         public string SerialLabel
         {
-            get { return Header.SerialLabel; }
-            set { Header.SerialLabel = value; OnPropertyChanged("SerialLabel"); }
-        }
+            get 
+            { 
+                return this.header.SerialLabel; 
+            }
 
+            set 
+            {
+                this.header.SerialLabel = value; 
+                this.OnPropertyChanged("SerialLabel"); 
+            }
+        }
 
         public string DepthLabel 
         {
-            get { return Header.DepthLabel; }
-            set { Header.DepthLabel = value; OnPropertyChanged("DepthLabel"); }
+            get 
+            { 
+                return this.header.DepthLabel; 
+            }
+
+            set 
+            {
+                this.header.DepthLabel = value; 
+                this.OnPropertyChanged("DepthLabel"); 
+            }
         }
 
         public string Position
         {
-            get { return Header.PositionLabel; }
-            set { Header.PositionLabel = value; OnPropertyChanged("PositionLabel"); }
+            get 
+            {
+                return this.header.PositionLabel;
+            }
+
+            set 
+            {
+                this.header.PositionLabel = value;
+                this.OnPropertyChanged("PositionLabel"); 
+            }
         }
 
         public string PresStringFormat 
         {
-            get { return Header.PresStringFormat; }
-            set { Header.PresStringFormat = value; OnPropertyChanged("PresStringFormat");} 
+            get 
+            {
+                return this.header.PresStringFormat; 
+            }
+
+            set 
+            {
+                this.header.PresStringFormat = value; 
+                this.OnPropertyChanged("PresStringFormat"); 
+            } 
         }
 
         public string TempStringFormat
         {
-            get { return Header.TempStringFormat; }
-            set { Header.TempStringFormat = value; OnPropertyChanged("TempStringFormat"); } 
-        }
+            get 
+            { 
+                return this.header.TempStringFormat;
+            }
 
+            set 
+            {
+                this.header.TempStringFormat = value; 
+                this.OnPropertyChanged("TempStringFormat"); 
+            } 
+        }
         #endregion
 
-
-        #region File Header User Inputs
+        #region File Header User Inputs (Properties)
         public string ClientInput
         {
-            get { return Header.ClientInput; }
-            set { Header.ClientInput = value; OnPropertyChanged("ClientInput"); }
+            get 
+            { 
+                return this.header.ClientInput; 
+            }
+
+            set 
+            {
+                this.header.ClientInput = value; 
+                this.OnPropertyChanged("ClientInput"); 
+            }
         }
 
         public string WellInput
         {
-            get { return Header.WellInput; }
-            set { Header.WellInput = value; OnPropertyChanged("WellInput"); }
+            get 
+            { 
+                return this.header.WellInput; 
+            }
+
+            set 
+            {
+                this.header.WellInput = value; 
+                this.OnPropertyChanged("WellInput"); 
+            }
         }
 
         public string DstInput
         {
-            get { return Header.DstInput; }
-            set { Header.DstInput = value; OnPropertyChanged("DstInput"); }
+            get 
+            {
+                return this.header.DstInput; 
+            }
+
+            set 
+            {
+                this.header.DstInput = value; 
+                this.OnPropertyChanged("DstInput"); 
+            }
         }
 
         public string SerialInput
         {
-            get { return Header.SerialInput; }
-            set { Header.SerialInput = value; OnPropertyChanged("SerialInput"); ExportDataFilesCommand.RaiseCanExecuteChanged(); }
+            get 
+            { 
+                return this.header.SerialInput; 
+            }
+
+            set 
+            {
+                this.header.SerialInput = value; 
+                this.OnPropertyChanged("SerialInput");
+                this.ExportDataFilesCommand.RaiseCanExecuteChanged(); 
+            }
         }
 
         public string DepthInput
         {
-            get { return Header.DepthInput; }
-            set { Header.DepthInput = value; OnPropertyChanged("DepthInput"); }
+            get 
+            { 
+                return this.header.DepthInput; 
+            }
+
+            set 
+            {
+                this.header.DepthInput = value; 
+                this.OnPropertyChanged("DepthInput"); 
+            }
         }
 
         public string PositionInput
         {
-            get { return Header.PositionInput; }
-            set { Header.PositionInput = value; OnPropertyChanged("PositionInput"); ExportDataFilesCommand.RaiseCanExecuteChanged(); }
-        }
-
-
-        #endregion
-
-
-        #region Path of currently selected directory
-        public string SelectedDirectory
-        {
-            get { return FileSelect.DirPath; }
-            set { FileSelect.DirPath = value; OnPropertyChanged("DirPath"); }
-        }
-        #endregion
-
-
-        #region Filter groupbox properties
-
-        private bool allDataCb;
-
-        public bool AllDataCb
-        {
-            get { return allDataCb; }
-            set 
+            get 
             { 
-                allDataCb = value;                 
-                OnPropertyChanged("AllDataCb");
+                return this.header.PositionInput; 
+            }
+
+            set 
+            {
+                this.header.PositionInput = value; 
+                this.OnPropertyChanged("PositionInput");
+                this.ExportDataFilesCommand.RaiseCanExecuteChanged(); 
             }
         }
-        
+        #endregion
 
-        private Models.FileTypes selectFileType;
+        #region Path of currently selected directory (Property)
+        public string SelectedDirectory
+        {
+            get 
+            { 
+                return this.fileSelect.DirPath; 
+            }
+
+            set 
+            {
+                this.fileSelect.DirPath = value; 
+                this.OnPropertyChanged("DirPath"); 
+            }
+        }
+        #endregion
+
+        #region Filter groupbox (Properties)
+        public bool AllDataCb
+        {
+            get 
+            {
+                return this.allDataCb;
+            }
+
+            set 
+            {
+                this.allDataCb = value;                 
+                this.OnPropertyChanged("AllDataCb");
+            }
+        }
 
         public Models.FileTypes SelectFileType
         {
-            get { return selectFileType; }
+            get 
+            {
+                return this.selectFileType; 
+            }
+
             set 
-            { 
-                selectFileType = value;
-                FileSelect.MemFile = null;
-                FileSelect.MultipleFiles = null;
-                OnPropertyChanged("SelectFileType");
-                ExportDataFilesCommand.RaiseCanExecuteChanged();
+            {
+                this.selectFileType = value;
+                this.fileSelect.MemFile = null;
+                this.fileSelect.MultipleFiles = null;
+                this.OnPropertyChanged("SelectFileType");
+                this.ExportDataFilesCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -160,23 +354,24 @@ namespace SRO_Management.ViewModels
                     .Cast<Models.FileTypes>();
             }
         }
-        
-        
+       
         // Bound to pressure unit combobox
-        private Models.PresUnitSelection selectedPresUnit;
-
         public Models.PresUnitSelection SelectedPresUnit
         {
-            get { return selectedPresUnit; }
+            get 
+            {
+                return this.selectedPresUnit; 
+            }
+
             set
             {
-                selectedPresUnit = value;
-                PresStringFormat = selectedPresUnit.ToString();
-                OnPropertyChanged("SelectedPresUnit");
+                this.selectedPresUnit = value;
+                this.PresStringFormat = this.selectedPresUnit.ToString();
+                this.OnPropertyChanged("SelectedPresUnit");
             }
         }
 
-        //Populate combobox with pressure unit enum values.
+        // Populate combobox with pressure unit enum values.
         public IEnumerable<Models.PresUnitSelection> PresUnitValuesComboBox
         {
             get
@@ -186,22 +381,23 @@ namespace SRO_Management.ViewModels
             }
         }
 
-
         // Bound to temp unit combobox
-        private Models.TempUnitSelection selectedTempUnit;
-
         public Models.TempUnitSelection SelectedTempUnit
         {
-            get { return selectedTempUnit; }
+            get 
+            {
+                return this.selectedTempUnit; 
+            }
+
             set
             {
-                selectedTempUnit = value;
-                TempStringFormat = selectedTempUnit.ToString();
-                OnPropertyChanged("SelectedTempUnit");
+                this.selectedTempUnit = value;
+                this.TempStringFormat = this.selectedTempUnit.ToString();
+                this.OnPropertyChanged("SelectedTempUnit");
             }
         }
 
-        //Populate combobox with temp unit enum values.
+        // Populate combobox with temp unit enum values.
         public IEnumerable<Models.TempUnitSelection> TempUnitValueComboBox
         {
             get 
@@ -211,137 +407,145 @@ namespace SRO_Management.ViewModels
             }
         }
 
-
-        private DateTime? filterStartTime = null;
-
         public DateTime? FilterStartTime
         {
-            get { return filterStartTime; }
-            set { filterStartTime = value; OnPropertyChanged("FilterStartTime"); }
+            get 
+            { 
+                return this.filterStartTime; 
+            }
+
+            set 
+            {
+                this.filterStartTime = value; 
+                this.OnPropertyChanged("FilterStartTime"); 
+            }
         }
-
-
-        private DateTime? filterEndTime = null;
 
         public DateTime? FilterEndTime
         {
-            get { return filterEndTime; }
-            set { filterEndTime = value; OnPropertyChanged("FilterEndTime"); }
-        }
+            get 
+            { 
+                return this.filterEndTime; 
+            }
 
-        private int shiftHours;
+            set 
+            {
+                this.filterEndTime = value; 
+                this.OnPropertyChanged("FilterEndTime"); 
+            }
+        }
 
         public int ShiftHours
         {
-            get { return shiftHours; }
-            set { shiftHours = value; OnPropertyChanged("shiftHours"); }
-        }
+            get 
+            { 
+                return this.shiftHours; 
+            }
 
-        private int shiftMins;
+            set 
+            {
+                this.shiftHours = value; 
+                this.OnPropertyChanged("shiftHours"); 
+            }
+        }
 
         public int ShiftMins
         {
-            get { return shiftMins; }
-            set { shiftMins = value; OnPropertyChanged("shiftMins"); }
-        }
+            get 
+            { 
+                return this.shiftMins;
+            }
 
-        private int shiftSecs;
+            set 
+            {
+                this.shiftMins = value; 
+                this.OnPropertyChanged("shiftMins"); 
+            }
+        }
 
         public int ShiftSecs
         {
-            get { return shiftSecs; }
-            set { shiftSecs = value; OnPropertyChanged("shiftSecs"); }
-        }
+            get 
+            { 
+                return this.shiftSecs; 
+            }
 
-        private string[] shiftDirection = {"+", "-"};
+            set 
+            {
+                this.shiftSecs = value; 
+                this.OnPropertyChanged("shiftSecs"); 
+            }
+        }
 
         public string[] ShiftDirection
         {
-            get { return shiftDirection; }
-            set { shiftDirection = value; }
-        }
+            get { return this.shiftDirection; }
 
-        private string selectedShift;
+            set { this.shiftDirection = value; }
+        }
 
         public string SelectedShift
         {
-            get { return selectedShift; }
-            set { selectedShift = value; OnPropertyChanged("selectedShift"); }
+            get 
+            { 
+                return this.selectedShift; 
+            }
+
+            set 
+            {
+                this.selectedShift = value; 
+                this.OnPropertyChanged("selectedShift"); 
+            }
         }
-        
-        
-        
-        
-        
-        
-        
-        
-
-
         #endregion
 
-
-        #region Command properties
+        #region Commands (Properties)
         public DelegateCommand CancelCommand { get; private set; }
 
         public DelegateCommand ExportDataFilesCommand { get; private set; }
 
-        private bool notBusy;
-
         public bool NotBusy
         {
-            get { return notBusy; }
-            set { notBusy = value; OnPropertyChanged("notBusy"); }
-        }
+            get
+            {
+                return this.notBusy;
+            }
 
-        private string progressText;
+            set 
+            {
+                this.notBusy = value; 
+                this.OnPropertyChanged("notBusy"); 
+            }
+        }
 
         public string ProgressText
         {
-            get { return progressText; }
-            set { progressText = value; OnPropertyChanged("progressText"); }
-        }
+            get 
+            { 
+                return this.progressText; 
+            }
 
-        private int progressValue;
+            set 
+            {
+                this.progressText = value; 
+                this.OnPropertyChanged("progressText"); 
+            }
+        }
 
         public int ProgressValue
         {
-            get { return progressValue; }
-            set { progressValue = value; OnPropertyChanged("progressValue"); }
+            get 
+            { 
+                return this.progressValue;
+            }
+
+            set 
+            {
+                this.progressValue = value; 
+                this.OnPropertyChanged("progressValue"); 
+            }
         }                
-        #endregion
-
-
-        public MainWindowViewModel()
-        {   
-            //Instantiate client file header model object
-            Header = new Models.HeaderModel();
-
-            // Instantiate file selection and dir path model
-            FileSelect = new Models.FileSelectModel();
-
-            //Default Pressure Units Combobox
-            SelectedPresUnit = Models.PresUnitSelection.psia;
-
-            //Default Temp Units Combobox
-            SelectedTempUnit = Models.TempUnitSelection.degC;
-
-            //All Data checkbox default value
-            AllDataCb = true;
-
-            //NotBusy set to true, export button enabled.
-            NotBusy = true;
-
-            // Progress bar text info
-            ProgressText = "Ready";
-
-            // default selected linear time shift direction
-            SelectedShift = ShiftDirection[0];
-
-            CancelCommand = new DelegateCommand(OnCancel, CanCancel);
-
-            ExportDataFilesCommand = new DelegateCommand(OnExportDataFiles, CanExportDataFiles);
-        }
+        #endregion       
 
         #region Cancel Command Implementation
         private bool CanCancel()
@@ -351,16 +555,16 @@ namespace SRO_Management.ViewModels
 
         private void OnCancel()
         {
-            if (cancelTokenSource != null)
+            if (this.cancelTokenSource != null)
             {
-                cancelTokenSource.Cancel();
+                this.cancelTokenSource.Cancel();
             }
-            
-            ProgressValue = 0;
-            ProgressText = "Export Cancelled";            
+
+            this.ProgressValue = 0;
+
+            this.ProgressText = "Export Cancelled";            
         }
         #endregion
-
 
         #region Export command implementation
         private bool CanExportDataFiles()
@@ -370,43 +574,45 @@ namespace SRO_Management.ViewModels
 
         private async void OnExportDataFiles()
         {
-            cancelTokenSource = new CancellationTokenSource();
-            var progress = new Progress<int>(i => ProgressValue = i);
+            this.cancelTokenSource = new CancellationTokenSource();
 
-            FileSelect.UserFileTypeSelection(SelectFileType);
+            var progress = new Progress<int>(i => this.ProgressValue = i);
 
-            NotBusy = false;            
+            this.fileSelect.UserFileTypeSelection(this.SelectFileType);
 
-            FileSelect.SaveTargetDir(SelectFileType, SerialInput, PositionInput);
+            this.NotBusy = false;
 
-            if ((SelectedDirectory != null) && (FileSelect.FileSaveName != null))
+            this.fileSelect.SaveTargetDir(this.SelectFileType, this.SerialInput, this.PositionInput);
+
+            if ((this.SelectedDirectory != null) && (this.fileSelect.FileSaveName != null))
             {
-                ProgressText = "Exporting Client Data";
-                await clientDataAsync(progress, cancelTokenSource.Token); 
+                this.ProgressText = "Exporting Client Data";
+                await this.ClientDataAsync(progress, this.cancelTokenSource.Token); 
             }
 
-            ExportDataFilesCommand.RaiseCanExecuteChanged();
-            NotBusy = true;          
+            this.ExportDataFilesCommand.RaiseCanExecuteChanged();
+            this.NotBusy = true;          
         }
 
-
-        private Task clientDataAsync(IProgress<int> progress, CancellationToken cancelToken)
+        private Task ClientDataAsync(IProgress<int> progress, CancellationToken cancelToken)
         {
             return Task.Run(() =>
                 {
                     try
                     {
                         IEnumerable<Models.IDataRecord> readInputFiles;
+
                         IEnumerable<Models.IDataRecord> convertedRecords;
+
                         IEnumerable<Models.IDataRecord> filteredRecords;
 
-                        if ((SelectFileType == Models.FileTypes.Memory))
+                        if (SelectFileType == Models.FileTypes.Memory)
                         {
-                            readInputFiles = new Models.MemReader(SelectedDirectory, FileSelect.MemFile);
+                            readInputFiles = new Models.MemReader(SelectedDirectory, fileSelect.MemFile);
                         }
                         else
                         {
-                            readInputFiles = new Models.SROReader(SelectedDirectory, FileSelect.MultipleFiles);
+                            readInputFiles = new Models.SROReader(SelectedDirectory, fileSelect.MultipleFiles);
                         }
 
                         if (cancelToken.IsCancellationRequested)
@@ -443,51 +649,52 @@ namespace SRO_Management.ViewModels
                         }
 
                         Models.CsvWriter writer = new Models.CsvWriter();
-                        writer.CreateFileWriterStreams(FileSelect.FileSaveName, filteredRecords, Header);
+                        writer.CreateFileWriterStreams(fileSelect.FileSaveName, filteredRecords, header);
 
                         progress.Report(100);
                         ProgressText = "Export Complete! " + DateTime.Now.ToString("T");
                     }
-
                     catch (FormatException formEx)
                     {
                         System.Windows.MessageBox.Show("Export Failed! Please select valid data file(s) (DST v3.1 or later)");
-                        System.Diagnostics.Trace.WriteLine(DateTime.Now + formEx.ToString());
+                        System.Diagnostics.Trace.WriteLine(DateTime.Now + "," + formEx.ToString() + "\n");
+                        System.Diagnostics.Trace.Flush();
                         progress.Report(0);
                         ProgressText = "Ready";
-                        FileSelect.MemFile = null;
-                        FileSelect.MultipleFiles = null;
+                        fileSelect.MemFile = null;
+                        fileSelect.MultipleFiles = null;
                     }
-
-                    catch(UnauthorizedAccessException accEx)
+                    catch (UnauthorizedAccessException accEx)
                     {
-                        System.Windows.MessageBox.Show("Export Failed! Please choose a valid filename and save location");
-                        System.Diagnostics.Trace.WriteLine(DateTime.Now + accEx.ToString());
+                        System.Windows.MessageBox.Show("Export Failed! Please choose a valid file and/or save location");
+                        System.Diagnostics.Trace.WriteLine(DateTime.Now + "," +  accEx.ToString() + "\n");
+                        System.Diagnostics.Trace.Flush();
                         progress.Report(0);
                         ProgressText = "Ready";
-                        FileSelect.MemFile = null;
-                        FileSelect.MultipleFiles = null;
+                        fileSelect.MemFile = null;
+                        fileSelect.MultipleFiles = null;
                     }
-
                     catch (TaskCanceledException canEx)
                     {
-                        System.Diagnostics.Trace.WriteLine(DateTime.Now + canEx.ToString());
+                        System.Diagnostics.Trace.WriteLine(DateTime.Now + "," + canEx.ToString() + "\n");
+                        System.Diagnostics.Trace.Flush();
                         progress.Report(0);
-                        FileSelect.MemFile = null;
-                        FileSelect.MultipleFiles = null;
+                        fileSelect.MemFile = null;
+                        fileSelect.MultipleFiles = null;
                     }
-
-                    catch(Exception genEx)
+                    catch (Exception genEx)
                     {
                         System.Windows.MessageBox.Show("Export Failed! Email: dave.pollock@exprogroup.com for further support");
-                        System.Diagnostics.Trace.WriteLine(DateTime.Now + genEx.ToString());
+                        System.Diagnostics.Trace.WriteLine(DateTime.Now + "," + genEx.ToString() + "\n");
+                        System.Diagnostics.Trace.Flush();
                         progress.Report(0);
                         ProgressText = "Ready";
-                        FileSelect.MemFile = null;
-                        FileSelect.MultipleFiles = null;
+                        fileSelect.MemFile = null;
+                        fileSelect.MultipleFiles = null;
                     }                    
                 });           
         }
         #endregion
+                
     }
 }

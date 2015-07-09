@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
 
 namespace SRO_Management.Models
 {
@@ -11,7 +11,6 @@ namespace SRO_Management.Models
     /// Enumerators to populate and utilise combo box and radio buttons on view.
     /// Created in namespace to allow selections to be used by other classes.
     /// </summary>
-
     public enum PresUnitSelection
     {
         psia,

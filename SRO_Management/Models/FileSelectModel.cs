@@ -14,64 +14,47 @@ namespace SRO_Management.Models
     /// </summary>
     public class FileSelectModel
     {
-        private List<string> multipleFiles;
-
-        public List<string> MultipleFiles
-        {
-            get { return multipleFiles; }
-            set { multipleFiles = value; }
-        }
-
-        private string dirPath;
-
-        public string DirPath
-        {
-            get { return dirPath; }
-            set { dirPath = value; }
-        }
-
-        private string memFile;
-
-        public string MemFile
-        {
-            get { return memFile; }
-            set { memFile = value; }
-        }
-
-        private string targetDir;
-
-        public string TargetDir
-        {
-            get { return targetDir; }
-            set { targetDir = value; }
-        }
-
-        private string fileSaveName;
-
-        public string FileSaveName
-        {
-            get { return fileSaveName; }
-            set { fileSaveName = value; }
-        }
-
         public FileSelectModel()
         {
-            DefaultDirPath();
+            this.DefaultDirPath();
         }
+
+        public List<string> MultipleFiles { get; set; }
+
+        public string DirPath { get; set; }
+
+        public string MemFile { get; set; }
+
+        public string TargetDir { get; set; }
+
+        public string FileSaveName { get; set; }        
 
         public void UserFileTypeSelection(FileTypes userSelectedFileType)
         {
             switch (userSelectedFileType)
             {                
                 case FileTypes.Memory:
-                    MemFileSelection();
+                    this.MemFileSelection();
                     break;
                 case FileTypes.SRO:
-                    MultiFileSelection();
+                    this.MultiFileSelection();
                     break;
                 default:
                     System.Diagnostics.Trace.Assert(false, "User selected file type not implemented");
                     throw new NotImplementedException("User selected file type not implemented");                   
+            }
+        }
+
+        public void SaveTargetDir(FileTypes selectedFileType, string serialInput, string positionInput)
+        {
+            Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
+            saveDialog.Filter = "Data Files (*.txt)|*.txt|All Files (*.*)|*.*";
+            saveDialog.FileName = string.Format(@"{0}_{1}_{2}_{3:MM-yy_HHmm}.txt", selectedFileType.ToString(), serialInput, positionInput, DateTime.Now);
+            saveDialog.InitialDirectory = this.DirPath;
+
+            if (saveDialog.ShowDialog() == true)
+            {
+                this.FileSaveName = saveDialog.FileName;
             }
         }
 
@@ -86,18 +69,18 @@ namespace SRO_Management.Models
 
             defaultPath = @"C:\Users\" + trimUser + @"\Configuration Workshop\";
 
-            DirPath = defaultPath;
+            this.DirPath = defaultPath;
         }
 
         private void MemFileSelection()
         {
-            MemFile = "";
+            this.MemFile = string.Empty;
 
             Microsoft.Win32.OpenFileDialog openDialog = new Microsoft.Win32.OpenFileDialog();
 
             openDialog.Filter = "Data Files (*.txt)|*.txt|All Files (*.*)|*.*";
             openDialog.Multiselect = false;
-            openDialog.InitialDirectory = DirPath;
+            openDialog.InitialDirectory = this.DirPath;
 
             string fileName;
 
@@ -105,32 +88,31 @@ namespace SRO_Management.Models
             {
                 if (openDialog.ShowDialog() == true)
                 {
-
                     fileName = System.IO.Path.GetFileName(openDialog.FileName);
-                    DirPath = System.IO.Path.GetDirectoryName(openDialog.FileName);
-                    MemFile = fileName;
+                    this.DirPath = System.IO.Path.GetDirectoryName(openDialog.FileName);
+                    this.MemFile = fileName;
                 }
             }
             catch (Exception memFileEx)
             {                
                 System.Diagnostics.Trace.WriteLine(DateTime.Now + "," + memFileEx.ToString(), ",Please select a valid sensor log file");
-                MemFile = null;
+                this.MemFile = null;
                 throw;
             }
         }
 
         private void MultiFileSelection()
         {
-            if (MultipleFiles != null)
+            if (this.MultipleFiles != null)
             {
-                MultipleFiles.Clear();
+                this.MultipleFiles.Clear();
             }
 
             Microsoft.Win32.OpenFileDialog openDialog = new Microsoft.Win32.OpenFileDialog();
 
             openDialog.Filter = "Data Files (*.hdf; *.txt)|*.hdf; *.txt|All Files (*.*)|*.*";
             openDialog.Multiselect = true;
-            openDialog.InitialDirectory = DirPath;
+            openDialog.InitialDirectory = this.DirPath;
 
             List<string> files = new List<string>();
 
@@ -143,29 +125,16 @@ namespace SRO_Management.Models
                         files.Add(System.IO.Path.GetFileName(fileName));
                     }
 
-                    MultipleFiles = files;
-                    DirPath = System.IO.Path.GetDirectoryName(openDialog.FileName);
+                    this.MultipleFiles = files;
+                    this.DirPath = System.IO.Path.GetDirectoryName(openDialog.FileName);
                 }
             }
             catch (Exception sroFileEx)
             {
                 System.Diagnostics.Trace.WriteLine(DateTime.Now + "," + sroFileEx.ToString(), ",Please select valid SRO data files");
-                MultipleFiles = null;
+                this.MultipleFiles = null;
                 throw;
             }
-        }
-
-        public void SaveTargetDir(FileTypes selectedFileType, string serialInput, string positionInput)
-        {
-            Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
-            saveDialog.Filter = "Data Files (*.txt)|*.txt|All Files (*.*)|*.*";
-            saveDialog.FileName = string.Format(@"{0}_{1}_{2}_{3:MM-yy_HHmm}.txt", selectedFileType.ToString(), serialInput, positionInput, DateTime.Now);
-            saveDialog.InitialDirectory = DirPath;
-
-            if (saveDialog.ShowDialog() == true)
-            {
-                FileSaveName = saveDialog.FileName;
-            }
-        }
+        }        
     }
 }

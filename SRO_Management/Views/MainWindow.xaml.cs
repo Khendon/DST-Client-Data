@@ -22,7 +22,7 @@ namespace SRO_Management
     {
         public MainWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }
